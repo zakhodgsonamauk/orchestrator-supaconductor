@@ -24,6 +24,8 @@ The design placed the resolver at `conductor/bin/resolve-model.sh`. `conductor/`
 
 ### Task 1: Test harness + role map + config role-default resolution
 
+**Status:** [ ]
+
 **Files:**
 - Create: `scripts/resolve-model.sh`
 - Create: `scripts/test-resolve-model.sh`
@@ -147,6 +149,8 @@ git commit -m "feat(models): jq-free resolver, role defaults + legacy back-compa
 
 ### Task 2: Session overlay layer
 
+**Status:** [ ]
+
 **Files:**
 - Modify: `scripts/resolve-model.sh`
 - Modify: `scripts/test-resolve-model.sh`
@@ -183,6 +187,8 @@ git commit -m "feat(models): session overlay layer in resolver"
 ---
 
 ### Task 3: Per-command pin layer (highest precedence)
+
+**Status:** [ ]
 
 **Files:** Modify `scripts/resolve-model.sh`, `scripts/test-resolve-model.sh`
 
@@ -228,6 +234,8 @@ git commit -m "feat(models): per-command pin layer (top precedence)"
 
 ### Task 4: Token validation (unknown token -> inherit)
 
+**Status:** [ ]
+
 **Files:** Modify `scripts/resolve-model.sh`, `scripts/test-resolve-model.sh`
 
 **Step 1: Add failing test:**
@@ -272,6 +280,8 @@ git commit -m "feat(models): validate model tokens, fall back to inherit"
 ## Phase 2: `/use-models` command
 
 ### Task 5: Create the `/use-models` command definition
+
+**Status:** [ ]
 
 **Files:**
 - Create: `commands/use-models.md`
@@ -351,6 +361,8 @@ git commit -m "feat(models): add /use-models session override command"
 
 ### Task 6: config schema in ALL setup paths + live config, ignore overlay
 
+**Status:** [ ]
+
 **Files:**
 - Modify: `conductor/config.json` (this project)
 - Modify: `commands/conductor-setup.md:46-54` (command template)
@@ -371,6 +383,10 @@ git commit -m "feat(models): add /use-models session override command"
 }
 ```
 (Resolver still reads legacy flat keys for back-compat — Task 1.)
+
+> **H-1 (from plan evaluation):** the resolver's `sed` parser reads one `"key": "value"` per
+> line, so each entry in `overrides` MUST be on its own line (the template above keeps
+> `overrides` empty `{}`; document one-per-line in the README config example — Task 10).
 
 **Step 2:** Add a `config.json` creation block to `scripts/setup.sh` (mirror the existing `if [ ! -f ... ]` guards; do NOT overwrite an existing config). Insert after the `knowledge/patterns.md` block:
 ```bash
@@ -419,6 +435,8 @@ git commit -m "feat(models): config.models schema in all setup paths + ignore ov
 
 ### Task 7: Change all `model:` frontmatter to `inherit`
 
+**Status:** [ ]
+
 **Files (all `model: opus|sonnet` frontmatter → `model: inherit`):**
 - Agents: `agents/ceo.md`, `cmo.md`, `board-meeting.md`, `cto.md`, `ux-designer.md`, `loop-plan-evaluator.md`, `loop-planner.md`, `loop-executor.md`, `conductor-orchestrator.md`, `loop-fixer.md`, `loop-execution-evaluator.md`, `name-picker.md`, `parallel-dispatcher.md`, `task-worker.md` (leave `code-reviewer.md` — already `inherit`)
 - Commands: all 38 files from the inventory in the design/track notes (ceo, board-review, brainstorming, board-meeting, conductor-new-track, cmo, conductor-implement, conductor-status, cto, brainstorm, conductor-setup, close-track, cto-advisor, loop-execution-evaluator, executing-plans, go, evaluate-plan, finishing-a-development-branch, new-track, loop-fixer, implement, loop-planner, loop-executor, execute-plan, evaluate-execution, loop-plan-evaluator, systematic-debugging, writing-plans, plan-sprint, ui-audit, task-worker, setup, write-plan, ux-designer, phase-review, parallel-dispatcher, status, using-git-worktrees)
@@ -455,6 +473,8 @@ git commit -m "refactor(models): frontmatter model -> inherit (interactive follo
 
 ### Task 8: Replace hardcoded model logic in conductor-orchestrator.md
 
+**Status:** [ ]
+
 **Files:**
 - Modify: `agents/conductor-orchestrator.md:177-186` (runnable dispatch), and the documentation examples at `:384-448` and `:660`
 
@@ -464,11 +484,22 @@ Expected AFTER edit: no matches.
 
 **Step 2:** Confirm currently FAILS (lists the lines).
 
-**Step 3: Implement** — replace the `case` block (177-186) with resolver-driven dispatch:
+**Step 3: Implement** — replace the `case` block (177-186) with resolver-driven dispatch.
+
+> **FIX-1 (from plan evaluation):** Address the resolver via `${CLAUDE_PLUGIN_ROOT}` — the
+> convention already used in `hooks/hooks.json` — NOT `$(dirname "$0")`, which does not
+> reliably point at the plugin `scripts/` dir when the orchestrator dispatches through
+> `run_shell_command`. Keep a `$(dirname "$0")/..` fallback for direct execution. CWD stays
+> the project dir so the resolver reads `conductor/config.json` + overlay relative to CWD.
+
 ```bash
     # Resolve model via shared resolver (config + session overlay + pins)
-    local model
-    model="$(bash "$(dirname "$0")/../scripts/resolve-model.sh" "$superpower" 2>/dev/null)"
+    # Plugin scripts live under CLAUDE_PLUGIN_ROOT (see hooks/hooks.json); fall back to
+    # a path relative to this file for direct execution.
+    local plugin_root="${CLAUDE_PLUGIN_ROOT:-$(cd "$(dirname "$0")/.." && pwd)}"
+    local resolver="${plugin_root}/scripts/resolve-model.sh"
+    local model="inherit"
+    [ -f "$resolver" ] && model="$(bash "$resolver" "$superpower" 2>/dev/null)"
     [ -z "$model" ] && model="inherit"
 
     echo "→ Invoking orchestrator-supaconductor:$superpower for track $track_id (model: $model)"
@@ -479,9 +510,10 @@ Expected AFTER edit: no matches.
     fi
     local exit_code=$?
 ```
-Then update the documentation examples (388-448, 660) to show the resolver pattern, e.g.:
+Then update the documentation examples (388-448, 660) to show the same resolver pattern, e.g.:
 ```bash
-model=$(bash scripts/resolve-model.sh writing-plans)
+resolver="${CLAUDE_PLUGIN_ROOT:-.}/scripts/resolve-model.sh"
+model=$(bash "$resolver" writing-plans)
 [ "$model" = inherit ] && claude --print "/...writing-plans ..." \
                        || claude --print --model "$model" "/...writing-plans ..."
 ```
@@ -502,6 +534,8 @@ git commit -m "feat(models): orchestrator dispatch uses resolve-model.sh"
 
 ### Task 9: Fix remaining dispatch literal in orchestrator SKILL doc
 
+**Status:** [ ]
+
 **Files:**
 - Modify: `skills/conductor-orchestrator/SKILL.md:998`
 
@@ -511,9 +545,10 @@ Expected AFTER: no matches.
 
 **Step 2:** Confirm currently FAILS (line 998).
 
-**Step 3: Implement** — replace the board-meeting spawn with resolver pattern:
+**Step 3: Implement** — replace the board-meeting spawn with resolver pattern (FIX-1: `${CLAUDE_PLUGIN_ROOT}`):
 ```bash
-model=$(bash scripts/resolve-model.sh board-meeting)
+resolver="${CLAUDE_PLUGIN_ROOT:-.}/scripts/resolve-model.sh"
+model=$(bash "$resolver" board-meeting)
 [ "$model" = inherit ] && claude --print "/orchestrator-supaconductor:board-meeting {question}" \
                        || claude --print --model "$model" "/orchestrator-supaconductor:board-meeting {question}"
 ```
@@ -531,6 +566,8 @@ git commit -m "feat(models): board-meeting spawn uses resolver in orchestrator s
 ## Phase 6: Documentation
 
 ### Task 10: Document config + /use-models + limitation + Requirements in README
+
+**Status:** [ ]
 
 **Files:**
 - Modify: `README.md` (Model Selection section near mode/config ~204; **Requirements section ~468**)
@@ -567,6 +604,8 @@ git commit -m "docs(models): document configurable model selection + /use-models
 ---
 
 ### Task 11: Full regression run
+
+**Status:** [ ]
 
 **Step 1:** Run the resolver test suite:
 ```bash
