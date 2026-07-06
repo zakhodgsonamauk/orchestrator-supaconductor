@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Features
+
+- **Configurable model selection** — models are no longer hardcoded per command. Set `models.planning` / `models.execution` and per-command `models.overrides` in `conductor/config.json`, or `/use-models <plan>+<exec>` for the session. Resolved by a new jq-free `scripts/resolve-model.sh` (precedence: command pin > session overlay > role default > `inherit`). All agent/command frontmatter now uses `model: inherit`, so interactive commands follow your session model (e.g. run on Fable without being forced to Opus). The orchestrator's dispatch resolves the model via the resolver instead of hardcoded `--model` flags. `scripts/setup.sh` now scaffolds `config.json` with a `models` block.
+
 ## [3.7.0] - 2026-04-03
 
 ### Features
