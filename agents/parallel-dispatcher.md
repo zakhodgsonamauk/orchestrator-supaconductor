@@ -1,7 +1,7 @@
 ---
 name: parallel-dispatcher
 description: Dispatches multiple worker agents in parallel based on DAG dependencies.
-model: sonnet
+model: inherit
 tools:
   - read_file
   - write_file

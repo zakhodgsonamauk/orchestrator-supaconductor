@@ -1,7 +1,7 @@
 ---
 name: loop-fixer
 description: Fixes issues found by evaluation. Evaluate-Loop Step 5.
-model: sonnet
+model: inherit
 tools:
   - read_file
   - write_file

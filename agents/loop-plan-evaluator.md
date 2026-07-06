@@ -1,7 +1,7 @@
 ---
 name: loop-plan-evaluator
 description: Validates execution plan against spec and existing work. Evaluate-Loop Step 2.
-model: opus
+model: inherit
 tools:
   - read_file
   - write_file

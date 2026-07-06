@@ -1,7 +1,7 @@
 ---
 name: task-worker
 description: Ephemeral worker for executing a single task. Coordinates via message bus.
-model: sonnet
+model: inherit
 tools:
   - read_file
   - write_file

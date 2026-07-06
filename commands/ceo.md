@@ -1,7 +1,7 @@
 ---
 name: ceo
 description: Get strategic business advice from an expert CEO advisor with 30 years of entrepreneurship experience
-model: opus
+model: inherit
 arguments:
   - name: question
     description: Your business question or topic to discuss

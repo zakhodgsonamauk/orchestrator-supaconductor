@@ -1,7 +1,7 @@
 ---
 name: loop-fixer
 description: "Fix issues found by evaluation. Evaluate-Loop Step 5."
-model: sonnet
+model: inherit
 arguments:
   - name: track_id
     description: "The track ID to fix"

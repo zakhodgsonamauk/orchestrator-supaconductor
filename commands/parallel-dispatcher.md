@@ -1,7 +1,7 @@
 ---
 name: parallel-dispatcher
 description: "Dispatch multiple task-workers in parallel based on DAG dependencies."
-model: sonnet
+model: inherit
 arguments:
   - name: track_id
     description: "The track ID to execute in parallel"

@@ -8,7 +8,7 @@ tools:
   - web_fetch
   - google_web_search
   - Task
-model: opus
+model: inherit
 ---
 
 # CEO Advisor Agent

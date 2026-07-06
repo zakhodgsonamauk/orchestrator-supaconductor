@@ -1,7 +1,7 @@
 ---
 name: evaluate-plan
 description: "Validate execution plan against spec. Evaluate-Loop Step 2."
-model: opus
+model: inherit
 arguments:
   - name: evaluate-plan
     description: "The track ID to evaluate"

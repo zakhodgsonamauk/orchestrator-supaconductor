@@ -1,7 +1,7 @@
 ---
 name: loop-executor
 description: "Implement tasks from the plan. Evaluate-Loop Step 3."
-model: sonnet
+model: inherit
 arguments:
   - name: track_id
     description: "The track ID to execute"

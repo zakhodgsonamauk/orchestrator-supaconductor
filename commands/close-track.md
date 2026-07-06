@@ -2,7 +2,7 @@
 name: close-track
 description: "Close a completed track — run quality gate, update conductor state, commit, and optionally handle the git branch"
 user_invocable: true
-model: sonnet
+model: inherit
 arguments:
   - name: track_id
     description: "Track ID to close (defaults to the active track from tracks.md)"

@@ -1,7 +1,7 @@
 ---
 name: conductor-orchestrator
 description: Master coordinator for the Conductor Evaluate-Loop. Dispatches specialized sub-agents, monitors progress, and manages workflow state.
-model: sonnet
+model: inherit
 tools:
   - read_file
   - write_file

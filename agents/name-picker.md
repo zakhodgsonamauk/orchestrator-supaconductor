@@ -1,7 +1,7 @@
 ---
 name: name-picker
 description: Creates tailored brand names autonomously through research and creative generation. Use when the system needs memorable, strategic brand names.
-model: sonnet
+model: inherit
 color: yellow
 tools:
   - read_file

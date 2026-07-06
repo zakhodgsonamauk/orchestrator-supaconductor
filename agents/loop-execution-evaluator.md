@@ -1,7 +1,7 @@
 ---
 name: loop-execution-evaluator
 description: Verifies implementation quality by dispatching specialized evaluators. Evaluate-Loop Step 4.
-model: sonnet
+model: inherit
 tools:
   - read_file
   - write_file

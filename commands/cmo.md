@@ -1,7 +1,7 @@
 ---
 name: cmo
 description: Get marketing strategy and brand positioning advice from an expert CMO advisor with 30 years of marketing leadership experience
-model: opus
+model: inherit
 arguments:
   - name: question
     description: Your marketing question or topic to discuss

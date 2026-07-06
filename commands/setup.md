@@ -2,7 +2,7 @@
 name: setup
 description: "Scaffolds the project and sets up the Conductor environment for spec-driven development"
 user_invocable: true
-model: opus
+model: inherit
 ---
 
 # /orchestrator-supaconductor:setup — Full Project Initialization

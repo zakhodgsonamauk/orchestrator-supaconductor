@@ -2,7 +2,7 @@
 name: conductor-status
 description: "Show current track status, loop step, tasks completed, and next action"
 user_invocable: true
-model: sonnet
+model: inherit
 ---
 
 # /conductor:status — Current Project Status
