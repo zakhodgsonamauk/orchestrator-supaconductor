@@ -11,7 +11,7 @@
       "name": "orchestrator-supaconductor",
       "source": {
         "source": "github",
-        "repo": "Ibrahim-3d/orchestrator-supaconductor"
+        "repo": "zakhodgsonamauk/orchestrator-supaconductor"
       },
       "description": "Conductor v3 — Multi-agent orchestration with Evaluate-Loop, parallel execution, Board of Directors, and bundled SupaConductor skills for Claude Code",
       "version": "3.7.0",
@@ -19,8 +19,8 @@
         "name": "Ibrahim",
         "url": "https://github.com/Ibrahim-3d"
       },
-      "homepage": "https://github.com/Ibrahim-3d/orchestrator-supaconductor",
-      "repository": "https://github.com/Ibrahim-3d/orchestrator-supaconductor",
+      "homepage": "https://github.com/zakhodgsonamauk/orchestrator-supaconductor",
+      "repository": "https://github.com/zakhodgsonamauk/orchestrator-supaconductor",
       "license": "MIT",
       "keywords": [
         "orchestration",

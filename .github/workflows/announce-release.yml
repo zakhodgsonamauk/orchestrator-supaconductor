@@ -75,7 +75,7 @@ jobs:
 
           If you installed via the Claude Code marketplace:
           ```
-          /install Ibrahim-3d/orchestrator-supaconductor
+          /install zakhodgsonamauk/orchestrator-supaconductor
           ```
 
           If you cloned via git:

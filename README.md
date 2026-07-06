@@ -10,10 +10,10 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Ibrahim-3d/orchestrator-supaconductor/blob/main/LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-blue.svg"/></a>
-  <a href="https://github.com/Ibrahim-3d/orchestrator-supaconductor"><img alt="Version" src="https://img.shields.io/badge/version-3.7.0-green.svg"/></a>
+  <a href="https://github.com/zakhodgsonamauk/orchestrator-supaconductor/blob/master/LICENSE"><img alt="AGPL-3.0 License" src="https://img.shields.io/badge/license-AGPL--3.0-blue.svg"/></a>
+  <a href="https://github.com/zakhodgsonamauk/orchestrator-supaconductor"><img alt="Version" src="https://img.shields.io/badge/version-3.7.0-green.svg"/></a>
   <a href="https://docs.anthropic.com/en/docs/claude-code"><img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-Plugin-blueviolet.svg"/></a>
-  <a href="https://github.com/Ibrahim-3d/orchestrator-supaconductor/discussions"><img alt="Community" src="https://img.shields.io/badge/community-discussions-orange.svg"/></a>
+  <a href="https://github.com/zakhodgsonamauk/orchestrator-supaconductor/discussions"><img alt="Community" src="https://img.shields.io/badge/community-discussions-orange.svg"/></a>
 </p>
 
 <p align="center">
@@ -84,18 +84,18 @@ Bundles [Superpowers](https://github.com/obra/superpowers) v4.3.0 (MIT) — ever
 Open Claude Code and run:
 
 ```
-/install Ibrahim-3d/orchestrator-supaconductor
+/install zakhodgsonamauk/orchestrator-supaconductor
 ```
 
 ### Option 2: Clone from GitHub
 
 ```bash
-git clone https://github.com/Ibrahim-3d/orchestrator-supaconductor.git ~/.claude/plugins/orchestrator-supaconductor
+git clone https://github.com/zakhodgsonamauk/orchestrator-supaconductor.git ~/.claude/plugins/orchestrator-supaconductor
 ```
 
 ### Option 3: Download manually
 
-Download the [latest release](https://github.com/Ibrahim-3d/orchestrator-supaconductor/releases) and extract it to `~/.claude/plugins/orchestrator-supaconductor/`.
+Download the [latest release](https://github.com/zakhodgsonamauk/orchestrator-supaconductor/releases) and extract it to `~/.claude/plugins/orchestrator-supaconductor/`.
 
 ### Verify it works
 
@@ -422,7 +422,7 @@ Yes. SupaConductor uses the `/orchestrator-supaconductor:` namespace and doesn't
 
 If you installed via marketplace:
 ```
-/install Ibrahim-3d/orchestrator-supaconductor
+/install zakhodgsonamauk/orchestrator-supaconductor
 ```
 
 If you cloned via git:
@@ -459,8 +459,8 @@ Your existing tracks and data are safe — only the command prefix changed from 
 
 ## Community
 
-- [Discussions](https://github.com/Ibrahim-3d/orchestrator-supaconductor/discussions) — Ask questions, share ideas, show what you've built
-- [Issues](https://github.com/Ibrahim-3d/orchestrator-supaconductor/issues) — Report bugs or request features
+- [Discussions](https://github.com/zakhodgsonamauk/orchestrator-supaconductor/discussions) — Ask questions, share ideas, show what you've built
+- [Issues](https://github.com/zakhodgsonamauk/orchestrator-supaconductor/issues) — Report bugs or request features
 - [Changelog](CHANGELOG.md) — See what's new in each release
 
 ---

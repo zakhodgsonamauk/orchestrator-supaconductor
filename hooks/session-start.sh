@@ -18,7 +18,7 @@ fi
 LOCAL_VERSION="${LOCAL_VERSION:-unknown}"
 
 # Check for latest release on GitHub (non-blocking, 3s timeout)
-REPO="Ibrahim-3d/orchestrator-supaconductor"
+REPO="zakhodgsonamauk/orchestrator-supaconductor"
 update_message=""
 if command -v curl &>/dev/null; then
     latest_tag=$(curl -s --max-time 3 \
