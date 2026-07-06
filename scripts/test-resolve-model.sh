@@ -46,5 +46,21 @@ JSON
 assert_eq "overlay beats planning role default" "fable" "$(run "$proj2" writing-plans)"
 assert_eq "overlay execution passthrough" "sonnet" "$(run "$proj2" loop-executor)"
 
+# --- Fixture: command pin beats overlay ---
+proj3="$TMP/p3"; mkdir -p "$proj3/conductor"
+cat > "$proj3/conductor/config.json" <<'JSON'
+{ "models": { "planning": "opus", "execution": "sonnet",
+  "overrides": {
+    "board-meeting": "opus",
+    "new-track": "inherit"
+  } } }
+JSON
+cat > "$proj3/conductor/.session-models.json" <<'JSON'
+{ "planning": "fable", "execution": "sonnet" }
+JSON
+assert_eq "command pin beats overlay" "opus"   "$(run "$proj3" board-meeting)"
+assert_eq "command pin can be inherit"  "inherit" "$(run "$proj3" new-track)"
+assert_eq "unpinned still uses overlay" "fable"  "$(run "$proj3" writing-plans)"
+
 echo "----"; echo "PASS=$PASS FAIL=$FAIL"
 [ "$FAIL" -eq 0 ]

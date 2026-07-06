@@ -38,6 +38,10 @@ emit() { echo "$1"; exit 0; }
 ROLE="$(role_for "$CMD")"
 [ -z "$ROLE" ] && emit inherit   # unknown command
 
+# 1. per-command pin (config.models.overrides.<command>)
+pin="$(json_val "$CONFIG" "$CMD")"
+[ -n "$pin" ] && emit "$pin"
+
 # 2. session overlay (conductor/.session-models.json)
 ov="$(json_val "$OVERLAY" "$ROLE")"
 [ -n "$ov" ] && emit "$ov"
