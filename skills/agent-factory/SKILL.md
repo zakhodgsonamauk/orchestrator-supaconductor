@@ -55,8 +55,8 @@ def create_worker_agent(task: dict, track_id: str, message_bus_path: str) -> dic
     template_name = template_map.get(task_type, 'task-worker.template.md')
     template_path = f"${CLAUDE_PLUGIN_ROOT}/skills/worker-templates/{template_name}"
 
-    # 3. read_file template
-    template = read_file(template_path)
+    # 3. Read template
+    template = Read(template_path)
 
     # 4. Prepare substitution values
     substitutions = {
@@ -91,14 +91,14 @@ def create_worker_agent(task: dict, track_id: str, message_bus_path: str) -> dic
         )
 
     # 7. Add base protocol
-    base_protocol = read_file("${CLAUDE_PLUGIN_ROOT}/skills/worker-templates/task-worker.template.md")
+    base_protocol = Read("${CLAUDE_PLUGIN_ROOT}/skills/worker-templates/task-worker.template.md")
     base_protocol_section = extract_section(base_protocol, "## Execution Protocol")
     worker_skill = worker_skill.replace('{base_worker_protocol}', base_protocol_section)
 
     # 8. Create worker skill directory (ephemeral)
     worker_skill_path = f"${CLAUDE_PLUGIN_ROOT}/skills/workers/{worker_id}/SKILL.md"
     os.makedirs(os.path.dirname(worker_skill_path), exist_ok=True)
-    write_file(worker_skill_path, worker_skill)
+    Write(worker_skill_path, worker_skill)
 
     # 9. Generate dispatch prompt
     dispatch_prompt = f"""You are worker agent {worker_id}.

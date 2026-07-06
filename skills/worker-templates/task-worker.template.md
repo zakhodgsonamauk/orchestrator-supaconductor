@@ -28,7 +28,7 @@ You are an ephemeral worker agent created to execute a single task. Follow the p
 
 **Location**: `{message_bus_path}`
 
-read_file and write_file to the message bus for coordination with other workers.
+Read and Write to the message bus for coordination with other workers.
 
 ## Execution Protocol
 
@@ -71,7 +71,7 @@ Execute the task according to acceptance criteria:
 
 **Guidelines**:
 - Follow existing code patterns in the codebase
-- write_file tests for business logic
+- Write tests for business logic
 - Handle errors appropriately
 - Commit changes incrementally
 

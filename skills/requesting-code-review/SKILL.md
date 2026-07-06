@@ -53,7 +53,7 @@ Use Task tool with orchestrator-supaconductor:code-reviewer type, fill template 
 
 You: Let me request code review before proceeding.
 
-BASE_SHA=$(git log --oneline | grep_search "Task 1" | head -1 | awk '{print $1}')
+BASE_SHA=$(git log --oneline | Grep "Task 1" | head -1 | awk '{print $1}')
 HEAD_SHA=$(git rev-parse HEAD)
 
 [Dispatch orchestrator-supaconductor:code-reviewer subagent]

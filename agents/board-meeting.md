@@ -3,8 +3,8 @@ name: board-meeting
 description: Full Board of Directors deliberation with 5 expert directors assessing, discussing, and voting.
 model: inherit
 tools:
-  - read_file
-  - write_file
+  - Read
+  - Write
 ---
 
 # Board Meeting Agent
@@ -86,9 +86,9 @@ Aggregate votes and produce board decision:
 
 After reaching resolution, you MUST persist the decision:
 
-1. Create directory: Use run_shell_command `mkdir -p conductor/tracks/{trackId}/.message-bus/board/`
-2. write_file `resolution.md` with the Board Output Format (below)
-3. write_file `session-{timestamp}.json`:
+1. Create directory: Use Bash `mkdir -p conductor/tracks/{trackId}/.message-bus/board/`
+2. Write `resolution.md` with the Board Output Format (below)
+3. Write `session-{timestamp}.json`:
    ```json
    {"session_id": "...", "verdict": "...", "vote_summary": {...}, "conditions": [...], "timestamp": "..."}
    ```

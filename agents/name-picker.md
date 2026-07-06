@@ -4,10 +4,10 @@ description: Creates tailored brand names autonomously through research and crea
 model: inherit
 color: yellow
 tools:
-  - read_file
-  - grep_search
-  - glob
-  - google_web_search
+  - Read
+  - Grep
+  - Glob
+  - WebSearch
   - Task
 ---
 
@@ -27,7 +27,7 @@ You are an expert-level brand manager in the marketing department, specializing 
 When first engaged, gather context autonomously. **Do NOT ask the user questions.** Research by:
 - Reading README, product docs, spec.md, and any branding files to understand the company's core values and mission
 - Searching the codebase and docs for target audience information
-- Using google_web_search to research key competitors and their brand names
+- Using WebSearch to research key competitors and their brand names
 - Inferring desired brand personality from existing branding, copy, and design patterns
 - Checking for any naming constraints in project documentation
 

@@ -115,7 +115,7 @@ Run this checklist whenever a sync trigger fires. Check each item and update if 
 ## Sync Execution Protocol
 
 ### Step 1: Identify What Changed
-read_file the trigger source (evaluation report, track completion, user instruction) and extract:
+Read the trigger source (evaluation report, track completion, user instruction) and extract:
 - **Decision**: What was decided?
 - **Impact**: Which documents does this affect?
 - **Scope**: Tier 1 only? Tier 1-2? Tier 1-3?

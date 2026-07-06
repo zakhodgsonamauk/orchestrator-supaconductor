@@ -269,7 +269,7 @@ if (matchingTracks.length > 1) {
 
 ## State Detection (New v2 Protocol)
 
-### Primary: read_file metadata.json
+### Primary: Read metadata.json
 
 ```typescript
 async function detectCurrentStep(trackId: string) {
@@ -430,7 +430,7 @@ Task({
     - Resume from: Next [ ] task after "${lastTask}"
 
     Your task:
-    1. read_file conductor/tracks/${trackId}/plan.md
+    1. Read conductor/tracks/${trackId}/plan.md
     2. Skip all [x] tasks - they are already done
     3. Find first [ ] task after "${lastTask}"
     4. Implement following loop-executor skill
@@ -924,7 +924,7 @@ async function resumeOrchestration(trackId: string) {
 ┌─────────────────────────────────────────────────────────────────┐
 │                        ORCHESTRATOR                             │
 │                                                                 │
-│  1. read_file metadata.json → detect current_step + step_status      │
+│  1. Read metadata.json → detect current_step + step_status      │
 │  2. Dispatch appropriate agent via Task tool                    │
 │  3. Agent updates metadata.json checkpoints                     │
 │  4. Agent returns → orchestrator reads new state                │
@@ -1084,7 +1084,7 @@ When `current_step` reaches `COMPLETE`:
 5. **Report to user**
 
 6. **Run Retrospective** (after completion commit):
-   Dispatch agent: "read_file conductor/tracks/{trackId}/plan.md and git log.
+   Dispatch agent: "Read conductor/tracks/{trackId}/plan.md and git log.
    Extract reusable patterns → append to conductor/knowledge/patterns.md
    Extract error fixes → append to conductor/knowledge/errors.json
    Create files if they don't exist."
@@ -1192,12 +1192,12 @@ async function runPostCompletionRetrospective(trackId: string) {
 
       Track: ${trackId}
 
-      1. read_file conductor/tracks/${trackId}/plan.md (all tasks and fix cycles)
-      2. read_file conductor/tracks/${trackId}/metadata.json (fix counts, consultations)
+      1. Read conductor/tracks/${trackId}/plan.md (all tasks and fix cycles)
+      2. Read conductor/tracks/${trackId}/metadata.json (fix counts, consultations)
       3. Analyze: What worked? What failed? What patterns emerged?
       4. Update conductor/knowledge/patterns.md with new reusable solutions
       5. Update conductor/knowledge/errors.json with new error patterns
-      6. write_file retrospective to conductor/tracks/${trackId}/retrospective.md
+      6. Write retrospective to conductor/tracks/${trackId}/retrospective.md
       7. Propose skill improvements if workflow issues found
 
       Follow ${CLAUDE_PLUGIN_ROOT}/skills/knowledge/retrospective-agent/SKILL.md`
@@ -1294,8 +1294,8 @@ async function logNewError(pattern, solution, trackId) {
 User: /conductor implement
 
 Orchestrator:
-1. read_file conductor/tracks.md → get active track
-2. read_file conductor/tracks/[track]/metadata.json → get loop_state
+1. Read conductor/tracks.md → get active track
+2. Read conductor/tracks/[track]/metadata.json → get loop_state
 3. Determine current step and status
 4. Dispatch appropriate agent
 5. Loop until complete

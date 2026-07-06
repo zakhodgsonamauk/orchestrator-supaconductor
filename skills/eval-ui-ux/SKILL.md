@@ -27,7 +27,7 @@ Dispatched by `loop-execution-evaluator` when the track is one of:
 
 ### Pass 1: Design System Adherence
 
-read_file your project's CSS/token file to extract the token system, then check components:
+Read your project's CSS/token file to extract the token system, then check components:
 
 | Check | What to Look For |
 |-------|-----------------|
@@ -196,7 +196,7 @@ const shouldShowImage = imageUrl && !['generating', 'error'].includes(status);
 
 ### Pass 8: Usability Check (Copy Quality)
 
-read_file all user-facing text in components and data files:
+Read all user-facing text in components and data files:
 
 | Check | What to Look For |
 |-------|-----------------|

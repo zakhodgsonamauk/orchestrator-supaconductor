@@ -121,10 +121,10 @@ When a step completes, update the checkpoint:
 
 If a track has v1 metadata (no `version` field or `loop_state`):
 
-1. read_file current metadata fields
+1. Read current metadata fields
 2. Infer loop state from plan.md content
 3. Add v2 structure with inferred values
-4. write_file back to metadata.json
+4. Write back to metadata.json
 
 ## Task Status Markers
 
@@ -139,9 +139,9 @@ If a track has v1 metadata (no `version` field or `loop_state`):
 
 ### Before Starting ANY Work
 
-1. read_file `tracks.md` to see what's already complete
-2. read_file the track's `plan.md` to see what tasks are done vs pending
-3. read_file `spec.md` to understand requirements
+1. Read `tracks.md` to see what's already complete
+2. Read the track's `plan.md` to see what tasks are done vs pending
+3. Read `spec.md` to understand requirements
 4. **Evaluate the plan** — verify scope matches spec, no overlap with completed tracks
 
 ### Start a Task

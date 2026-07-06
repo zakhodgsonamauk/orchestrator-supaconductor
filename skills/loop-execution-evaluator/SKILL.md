@@ -19,7 +19,7 @@ A generic checklist misses critical issues specific to each type.
 
 ## Dispatch Logic
 
-read_file the track's `metadata.json` and `spec.md` to determine the track type, then dispatch:
+Read the track's `metadata.json` and `spec.md` to determine the track type, then dispatch:
 
 | Track Type | Keywords in spec/metadata | Evaluator |
 |-----------|--------------------------|-----------|
@@ -40,7 +40,7 @@ When multiple evaluators apply, run them all. The track passes only if ALL evalu
 ## Dispatch Workflow
 
 ```
-1. read_file track metadata.json + spec.md
+1. Read track metadata.json + spec.md
 2. Determine track type(s)
 3. Dispatch evaluator(s):
    → eval-ui-ux         (if UI track)
@@ -184,12 +184,12 @@ The execution evaluator MUST update the track's `metadata.json` at key points:
 ```
 
 ### Update Protocol
-1. read_file current `metadata.json`
+1. Read current `metadata.json`
 2. Update `loop_state.checkpoints.EVALUATE_EXECUTION` with results
 3. If PASS + business sync needed: Set `current_step` to `BUSINESS_SYNC`
 4. If PASS + no sync needed: Set `current_step` to `COMPLETE`
 5. If FAIL: Set `current_step` to `FIX`, increment `fix_cycle_count` in loop_state
-6. write_file back to `metadata.json`
+6. Write back to `metadata.json`
 
 ## Handoff
 

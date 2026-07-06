@@ -170,7 +170,7 @@ After completing a feature track:
 
 Before starting any track:
 
-1. read_file all context artifacts
+1. Read all context artifacts
 2. Flag any outdated information
 3. Propose updates before proceeding
 4. Confirm context accuracy with stakeholders
@@ -357,7 +357,7 @@ Conductor supports multi-session development through context persistence:
 
 ### Starting a New Session
 
-1. read_file index.md to orient yourself
+1. Read index.md to orient yourself
 2. Check tracks.md for active work
 3. Review relevant track's plan.md for current task
 4. Verify context artifacts are current
@@ -379,7 +379,7 @@ If interrupted mid-task:
 
 ## Best Practices
 
-1. **read_file context first**: Always read_file relevant artifacts before starting work
+1. **Read context first**: Always Read relevant artifacts before starting work
 2. **Small updates**: Make incremental context changes, not massive rewrites
 3. **Link decisions**: Reference context when making implementation choices
 4. **Version context**: Commit context changes alongside code changes

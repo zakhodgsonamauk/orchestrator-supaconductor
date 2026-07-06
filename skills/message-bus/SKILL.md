@@ -77,7 +77,7 @@ def post_message(bus_path: str, msg_type: str, source: str, payload: dict):
 
     # Append to queue (atomic via file locking)
     with open(f"{bus_path}/queue.jsonl", "a") as f:
-        f.write_file(json.dumps(message) + "\n")
+        f.Write(json.dumps(message) + "\n")
 
     # Create event file for polling
     if msg_type in ["TASK_COMPLETE", "FILE_UNLOCK", "BOARD_RESOLVE"]:
@@ -217,7 +217,7 @@ Each director posts their assessment:
 def post_board_assessment(bus_path: str, director: str, assessment: dict):
     board_path = f"{bus_path}/board"
 
-    # read_file existing assessments
+    # Read existing assessments
     assess_file = f"{board_path}/assessments.json"
     assessments = json.load(open(assess_file)) if os.path.exists(assess_file) else {}
 
@@ -251,7 +251,7 @@ def post_board_discussion(bus_path: str, from_dir: str, to_dir: str,
 
     # Append to discussion log
     with open(f"{board_path}/discussion.jsonl", "a") as f:
-        f.write_file(json.dumps(discussion_msg) + "\n")
+        f.Write(json.dumps(discussion_msg) + "\n")
 
     # Post to main queue
     post_message(bus_path, "BOARD_DISCUSS", from_dir, discussion_msg)
@@ -414,7 +414,7 @@ def init_message_bus(track_path: str):
 ## Worker Protocol
 
 1. **On Start**:
-   - read_file message bus for TASK_COMPLETE events of dependencies
+   - Read message bus for TASK_COMPLETE events of dependencies
    - Verify all dependencies are met
    - Update worker-status.json with RUNNING
 
@@ -443,12 +443,12 @@ def init_message_bus(track_path: str):
 ## Board Protocol
 
 1. **Phase 1 (ASSESS)**:
-   - All 5 directors read_file proposal
+   - All 5 directors Read proposal
    - Each posts BOARD_ASSESS to assessments.json
    - Wait for all 5 assessments
 
 2. **Phase 2 (DISCUSS)** -- 3 rounds:
-   - Directors read_file others' assessments
+   - Directors Read others' assessments
    - Post BOARD_DISCUSS messages
    - Respond to challenges and questions
 

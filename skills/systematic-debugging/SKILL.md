@@ -51,10 +51,10 @@ You MUST complete each phase before proceeding to the next.
 
 **BEFORE attempting ANY fix:**
 
-1. **read_file Error Messages Carefully**
+1. **Read Error Messages Carefully**
    - Don't skip past errors or warnings
    - They often contain the exact solution
-   - read_file stack traces completely
+   - Read stack traces completely
    - Note line numbers, file paths, error codes
 
 2. **Reproduce Consistently**
@@ -94,7 +94,7 @@ You MUST complete each phase before proceeding to the next.
 
    # Layer 2: Build script
    echo "=== Env vars in build script: ==="
-   env | grep_search IDENTITY || echo "IDENTITY not in environment"
+   env | Grep IDENTITY || echo "IDENTITY not in environment"
 
    # Layer 3: Signing script
    echo "=== Keychain state: ==="
@@ -128,8 +128,8 @@ You MUST complete each phase before proceeding to the next.
    - What works that's similar to what's broken?
 
 2. **Compare Against References**
-   - If implementing pattern, read_file reference implementation COMPLETELY
-   - Don't skim - read_file every line
+   - If implementing pattern, Read reference implementation COMPLETELY
+   - Don't skim - Read every line
    - Understand the pattern fully before applying
 
 3. **Identify Differences**
@@ -148,7 +148,7 @@ You MUST complete each phase before proceeding to the next.
 
 1. **Form Single Hypothesis**
    - State clearly: "I think X is the root cause because Y"
-   - write_file it down
+   - Write it down
    - Be specific, not vague
 
 2. **Test Minimally**
@@ -216,7 +216,7 @@ You MUST complete each phase before proceeding to the next.
 
 | Phase | Key Activities | Success Criteria |
 |-------|---------------|------------------|
-| **1. Root Cause** | read_file errors, reproduce, check changes, gather evidence | Understand WHAT and WHY |
+| **1. Root Cause** | Read errors, reproduce, check changes, gather evidence | Understand WHAT and WHY |
 | **2. Pattern** | Find working examples, compare | Identify differences |
 | **3. Hypothesis** | Form theory, test minimally | Confirmed or new hypothesis |
 | **4. Implementation** | Create test, fix, verify | Bug resolved, tests pass |
