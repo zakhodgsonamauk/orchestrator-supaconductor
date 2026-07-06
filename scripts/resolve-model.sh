@@ -38,6 +38,10 @@ emit() { echo "$1"; exit 0; }
 ROLE="$(role_for "$CMD")"
 [ -z "$ROLE" ] && emit inherit   # unknown command
 
+# 2. session overlay (conductor/.session-models.json)
+ov="$(json_val "$OVERLAY" "$ROLE")"
+[ -n "$ov" ] && emit "$ov"
+
 # 3. role default: config.models.<role>, then legacy <role>_model
 rd="$(json_val "$CONFIG" "$ROLE")"
 [ -z "$rd" ] && rd="$(json_val "$CONFIG" "${ROLE}_model")"

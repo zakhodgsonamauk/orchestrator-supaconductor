@@ -37,5 +37,14 @@ assert_eq "legacy execution_model back-compat" "sonnet" "$(run "$projL" loop-exe
 projN="$TMP/pN"; mkdir -p "$projN/conductor"
 assert_eq "no config -> inherit" "inherit" "$(run "$projN" writing-plans)"
 
+# --- Fixture: overlay overrides role default ---
+proj2="$TMP/p2"; mkdir -p "$proj2/conductor"
+cp "$proj/conductor/config.json" "$proj2/conductor/config.json"
+cat > "$proj2/conductor/.session-models.json" <<'JSON'
+{ "planning": "fable", "execution": "sonnet" }
+JSON
+assert_eq "overlay beats planning role default" "fable" "$(run "$proj2" writing-plans)"
+assert_eq "overlay execution passthrough" "sonnet" "$(run "$proj2" loop-executor)"
+
 echo "----"; echo "PASS=$PASS FAIL=$FAIL"
 [ "$FAIL" -eq 0 ]
