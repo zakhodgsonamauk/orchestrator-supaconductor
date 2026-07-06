@@ -33,7 +33,17 @@ json_val() {
   sed -n "s/.*\"${key}\"[[:space:]]*:[[:space:]]*\"\([^\"]*\)\".*/\1/p" "$1" | head -1
 }
 
-emit() { echo "$1"; exit 0; }
+valid_token() {
+  case "$1" in
+    inherit|opus|sonnet|haiku|fable) return 0 ;;
+    claude-opus-4-8|claude-sonnet-5|claude-haiku-4-5-20251001|claude-fable-5) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+emit() {
+  if valid_token "$1"; then echo "$1"; exit 0
+  else echo "resolve-model: invalid model token '$1', using inherit" >&2; echo inherit; exit 0; fi
+}
 
 ROLE="$(role_for "$CMD")"
 [ -z "$ROLE" ] && emit inherit   # unknown command

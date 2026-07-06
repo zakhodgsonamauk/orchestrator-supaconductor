@@ -62,5 +62,14 @@ assert_eq "command pin beats overlay" "opus"   "$(run "$proj3" board-meeting)"
 assert_eq "command pin can be inherit"  "inherit" "$(run "$proj3" new-track)"
 assert_eq "unpinned still uses overlay" "fable"  "$(run "$proj3" writing-plans)"
 
+# --- Fixture: invalid token -> inherit + warning ---
+proj4="$TMP/p4"; mkdir -p "$proj4/conductor"
+cat > "$proj4/conductor/config.json" <<'JSON'
+{ "models": { "planning": "gpt-9000", "execution": "sonnet" } }
+JSON
+assert_eq "invalid token falls back to inherit" "inherit" "$(run "$proj4" writing-plans 2>/dev/null)"
+( cd "$proj4" && echo '{"models":{"planning":"claude-opus-4-8","execution":"sonnet"}}' > conductor/config.json )
+assert_eq "valid exact id passes" "claude-opus-4-8" "$(run "$proj4" writing-plans)"
+
 echo "----"; echo "PASS=$PASS FAIL=$FAIL"
 [ "$FAIL" -eq 0 ]
