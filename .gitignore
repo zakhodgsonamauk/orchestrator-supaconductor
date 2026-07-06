@@ -20,6 +20,8 @@ node_modules/
 reddit-responses*
 
 # Conductor runtime (generated per-project, not part of plugin)
-conductor/tracks/
-conductor/knowledge/
+conductor/
 .message-bus/
+
+# Session model overlay (runtime, per-session)
+conductor/.session-models.json

@@ -77,10 +77,19 @@ mkdir -p conductor/knowledge
 {
   "mode": "agentic",
   "max_fix_cycles": 5,
-  "planning_model": "opus",
-  "execution_model": "sonnet"
+  "models": {
+    "planning": "opus",
+    "execution": "sonnet",
+    "overrides": {}
+  }
 }
 ```
+
+**Model config:** `models.planning` / `models.execution` set the default model per role.
+`models.overrides` pins individual commands (each entry on its own line), e.g.
+`"board-meeting": "opus"`. Values accept `opus|sonnet|haiku|fable`, an exact id like
+`claude-opus-4-8`, or `inherit`. See `scripts/resolve-model.sh` and `/use-models`.
+Legacy top-level `planning_model`/`execution_model` are still read for back-compat.
 
 **Mode Options:**
 - `"agentic"` (default) — Fully autonomous. All decisions resolved by agents. Interactive questions auto-generate after presenting suggestions. Never blocks on user input.

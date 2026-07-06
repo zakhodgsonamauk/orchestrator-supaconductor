@@ -84,6 +84,22 @@ PATTERNS_EOF
   echo "  Created conductor/knowledge/patterns.md"
 fi
 
+# Create config.json if it doesn't exist
+if [ ! -f "$PROJECT_DIR/conductor/config.json" ]; then
+  cat > "$PROJECT_DIR/conductor/config.json" << 'CONFIG_EOF'
+{
+  "mode": "agentic",
+  "max_fix_cycles": 5,
+  "models": {
+    "planning": "opus",
+    "execution": "sonnet",
+    "overrides": {}
+  }
+}
+CONFIG_EOF
+  echo "  Created conductor/config.json"
+fi
+
 # Copy workflow docs if they don't exist
 PLUGIN_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 
