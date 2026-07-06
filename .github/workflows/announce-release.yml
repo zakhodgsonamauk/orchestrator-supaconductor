@@ -73,15 +73,11 @@ jobs:
 
           **How to update:**
 
-          If you installed via the Claude Code marketplace:
           ```
-          /install zakhodgsonamauk/orchestrator-supaconductor
+          /plugin update orchestrator-supaconductor@zakhodgson-plugins
           ```
 
-          If you cloned via git:
-          ```bash
-          cd ~/.claude/plugins/orchestrator-supaconductor && git pull
-          ```
+          Then run `/reload-plugins` (or restart the session).
 
           **Full release notes:** {url}
 

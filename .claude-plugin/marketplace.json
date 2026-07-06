@@ -1,10 +1,10 @@
 {
-  "name": "ibrahim-plugins",
-  "description": "Official Claude Code plugins by Ibrahim — AI image generation, multi-agent orchestration, and more",
+  "name": "zakhodgson-plugins",
+  "description": "Zak Hodgson's fork of SupaConductor — multi-agent orchestration for Claude Code (fork of Ibrahim-3d/orchestrator-supaconductor)",
   "version": "3.7.0",
   "owner": {
-    "name": "Ibrahim",
-    "url": "https://github.com/Ibrahim-3d"
+    "name": "zakhodgsonamauk",
+    "url": "https://github.com/zakhodgsonamauk"
   },
   "plugins": [
     {

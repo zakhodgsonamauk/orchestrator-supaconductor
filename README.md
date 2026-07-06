@@ -79,27 +79,66 @@ Bundles [Superpowers](https://github.com/obra/superpowers) v4.3.0 (MIT) — ever
 
 ## Installation
 
-### Option 1: Marketplace (recommended)
+> This is a **fork** of `Ibrahim-3d/orchestrator-supaconductor`. It ships from the
+> marketplace **`zakhodgson-plugins`** (repo `zakhodgsonamauk/orchestrator-supaconductor`,
+> branch `master`). The plugin name is still `orchestrator-supaconductor`.
 
-Open Claude Code and run:
+### Fresh install (no existing SupaConductor)
+
+In Claude Code, run these two commands:
 
 ```
-/install zakhodgsonamauk/orchestrator-supaconductor
+/plugin marketplace add zakhodgsonamauk/orchestrator-supaconductor
+/plugin install orchestrator-supaconductor@zakhodgson-plugins
 ```
 
-### Option 2: Clone from GitHub
+- `/plugin marketplace add` accepts the `owner/repo` shorthand for GitHub. For other Git
+  hosts use the full URL, e.g. `/plugin marketplace add https://gitlab.com/owner/repo.git`.
+- `orchestrator-supaconductor` is the plugin name; `zakhodgson-plugins` is this fork's
+  marketplace name (from `.claude-plugin/marketplace.json`).
 
-```bash
-git clone https://github.com/zakhodgsonamauk/orchestrator-supaconductor.git ~/.claude/plugins/orchestrator-supaconductor
+> Note: `/install owner/repo` is **not** a real Claude Code command — use the two commands above.
+
+### Replacing an existing install from the original repo
+
+If you already installed the plugin from the original `Ibrahim-3d` marketplace
+(`ibrahim-plugins`), remove it first, then add this fork. Run in Claude Code:
+
+```
+# 1. Uninstall the original plugin
+/plugin uninstall orchestrator-supaconductor@ibrahim-plugins
+
+# 2. Remove the original marketplace
+/plugin marketplace remove ibrahim-plugins
+
+# 3. Add this fork's marketplace and install
+/plugin marketplace add zakhodgsonamauk/orchestrator-supaconductor
+/plugin install orchestrator-supaconductor@zakhodgson-plugins
+
+# 4. Load the new definitions without restarting
+/reload-plugins
 ```
 
-### Option 3: Download manually
+The fork uses a **distinct** marketplace name (`zakhodgson-plugins`), so it will not
+collide with `ibrahim-plugins`. Steps 1–2 are only to stop the original version from
+also providing the same `/orchestrator-supaconductor:*` commands. If you'd rather keep
+both installed, skip steps 1–2 — but only one plugin should own the command namespace at
+a time, so disabling the original via `/plugin` is recommended.
 
-Download the [latest release](https://github.com/zakhodgsonamauk/orchestrator-supaconductor/releases) and extract it to `~/.claude/plugins/orchestrator-supaconductor/`.
+### Updating this fork later
+
+```
+/plugin update orchestrator-supaconductor@zakhodgson-plugins
+```
+
+Or from your shell: `claude plugin update orchestrator-supaconductor@zakhodgson-plugins`.
 
 ### Verify it works
 
-Start a new Claude Code session and type `/orchestrator-supaconductor:`. You should see a list of commands appear. If you see `/orchestrator-supaconductor:go`, you're all set.
+After install, run `/reload-plugins` (or restart the session), then type
+`/orchestrator-supaconductor:`. You should see the command list — if `/orchestrator-supaconductor:go`
+appears, you're set. Plugins are cached under `~/.claude/plugins/cache/` and managed by
+Claude Code; don't `git clone` into that directory — use the marketplace commands above.
 
 ---
 
@@ -472,27 +511,26 @@ Yes. SupaConductor uses the `/orchestrator-supaconductor:` namespace and doesn't
 
 ### How do I update to a newer version?
 
-If you installed via marketplace:
 ```
-/install zakhodgsonamauk/orchestrator-supaconductor
+/plugin update orchestrator-supaconductor@zakhodgson-plugins
 ```
 
-If you cloned via git:
-```bash
-cd ~/.claude/plugins/orchestrator-supaconductor && git pull
-```
+Or from your shell: `claude plugin update orchestrator-supaconductor@zakhodgson-plugins`.
+Run `/reload-plugins` afterward (or restart the session) so new agent/skill definitions
+take effect.
 
 ### How do I uninstall?
 
-```bash
-# Disable without removing
-/plugin    # Toggle it off in the plugin menu
+```
+# Remove the plugin
+/plugin uninstall orchestrator-supaconductor@zakhodgson-plugins
 
-# Full removal
-rm -rf ~/.claude/plugins/orchestrator-supaconductor
+# (optional) remove the marketplace too
+/plugin marketplace remove zakhodgson-plugins
 ```
 
-The `conductor/` directory in your project stays — it's just documentation files.
+Or open `/plugin` and toggle it off to disable without removing. The `conductor/`
+directory in your project stays — it's just documentation files.
 
 ---
 
