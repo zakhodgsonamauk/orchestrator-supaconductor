@@ -56,12 +56,12 @@ digraph process {
         "Mark task complete in TodoWrite" [shape=box];
     }
 
-    "read_file plan, extract all tasks with full text, note context, create TodoWrite" [shape=box];
+    "Read plan, extract all tasks with full text, note context, create TodoWrite" [shape=box];
     "More tasks remain?" [shape=diamond];
     "Dispatch final code reviewer subagent for entire implementation" [shape=box];
     "Use orchestrator-supaconductor:finishing-a-development-branch" [shape=box style=filled fillcolor=lightgreen];
 
-    "read_file plan, extract all tasks with full text, note context, create TodoWrite" -> "Dispatch implementer subagent (./implementer-prompt.md)";
+    "Read plan, extract all tasks with full text, note context, create TodoWrite" -> "Dispatch implementer subagent (./implementer-prompt.md)";
     "Dispatch implementer subagent (./implementer-prompt.md)" -> "Implementer subagent asks questions?";
     "Implementer subagent asks questions?" -> "Answer questions, provide context" [label="yes"];
     "Answer questions, provide context" -> "Dispatch implementer subagent (./implementer-prompt.md)";
@@ -93,7 +93,7 @@ digraph process {
 ```
 You: I'm using Subagent-Driven Development to execute this plan.
 
-[read_file plan file once: conductor/tracks/{track_id}/plan.md]
+[Read plan file once: conductor/tracks/{track_id}/plan.md]
 [Extract all 5 tasks with full text and context]
 [Create TodoWrite with all tasks]
 
@@ -203,7 +203,7 @@ Done!
 - Skip reviews (spec compliance OR code quality)
 - Proceed with unfixed issues
 - Dispatch multiple implementation subagents in parallel (conflicts)
-- Make subagent read_file plan file (provide full text instead)
+- Make subagent Read plan file (provide full text instead)
 - Skip scene-setting context (subagent needs to understand where task fits)
 - Ignore subagent questions (answer before letting them proceed)
 - Accept "close enough" on spec compliance (spec reviewer found issues = not done)

@@ -68,7 +68,7 @@ Dispatched by `loop-execution-evaluator` when the track involves:
 | Check | What to Look For |
 |-------|-----------------|
 | Create | Data saved correctly to database/storage |
-| read_file | Data retrieved and rendered correctly |
+| Read | Data retrieved and rendered correctly |
 | Update | Changes persisted on save |
 | Delete | Records removed, UI reflects deletion |
 | Relationships | Foreign keys / joins working correctly |

@@ -18,7 +18,7 @@ Load plan, review critically, execute all tasks autonomously to completion.
 ## The Process
 
 ### Step 1: Load and Review Plan
-1. read_file plan file
+1. Read plan file
 2. Review critically - identify any questions or concerns about the plan
 3. If concerns:
    - **`"agentic"` mode**: Resolve autonomously — consult lead agents (Architecture Lead, Tech Lead) via subagent dispatch. NEVER ask the user.
@@ -90,7 +90,7 @@ After all tasks complete and verified:
 ## Conductor Integration (Autonomous Mode)
 
 When invoked with `--plan`, `--track-dir`, and `--metadata` parameters (from Conductor orchestrator):
-- read_file plan from `--plan` path
+- Read plan from `--plan` path
 - **`"agentic"` mode**: Execute ALL tasks without stopping — run autonomously
 - **`"human-in-the-loop"` mode**: Execute in batches of 3 — stop at blockers, wait for user feedback between batches
 - After each task: use replace tool to mark `[x]` in plan.md with commit SHA

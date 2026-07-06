@@ -23,7 +23,7 @@ LLMs respond to the same persuasion principles as humans. Understanding this psy
 
 **Example:**
 ```markdown
-✅ write_file code before test? Delete it. Start over. No exceptions.
+✅ Write code before test? Delete it. Start over. No exceptions.
 ❌ Consider writing tests first when feasible.
 ```
 

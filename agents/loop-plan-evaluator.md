@@ -3,11 +3,11 @@ name: loop-plan-evaluator
 description: Validates execution plan against spec and existing work. Evaluate-Loop Step 2.
 model: inherit
 tools:
-  - read_file
-  - write_file
-  - replace
-  - glob
-  - grep_search
+  - Read
+  - Write
+  - Edit
+  - Glob
+  - Grep
 ---
 
 # Loop Plan Evaluator Agent
@@ -21,8 +21,8 @@ You are the **Plan Evaluation Agent** for the Conductor Evaluate-Loop (Step 2). 
 Every task must trace to a spec requirement.
 
 ```javascript
-const spec = await read_file(`conductor/tracks/${trackId}/spec.md`);
-const plan = await read_file(`conductor/tracks/${trackId}/plan.md`);
+const spec = await Read(`conductor/tracks/${trackId}/spec.md`);
+const plan = await Read(`conductor/tracks/${trackId}/plan.md`);
 // Verify each task has corresponding requirement in spec
 ```
 
@@ -31,7 +31,7 @@ const plan = await read_file(`conductor/tracks/${trackId}/plan.md`);
 Check for duplicate work with existing tracks.
 
 ```javascript
-const tracks = await read_file(`conductor/tracks.md`);
+const tracks = await Read(`conductor/tracks.md`);
 // Check for completed work that matches planned tasks
 // Flag any duplication
 ```
@@ -72,7 +72,7 @@ const boardResult = await Task({
 
 ## Output
 
-write_file evaluation report to plan.md:
+Write evaluation report to plan.md:
 
 ```markdown
 ## Plan Evaluation Report

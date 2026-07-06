@@ -86,7 +86,7 @@ async function gitInit(directory: string) {
 
 **Run and capture:**
 ```bash
-npm test 2>&1 | grep_search 'DEBUG git init'
+npm test 2>&1 | Grep 'DEBUG git init'
 ```
 
 **Analyze stack traces:**

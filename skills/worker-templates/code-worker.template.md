@@ -29,10 +29,10 @@ You are a code-focused worker with TDD emphasis. Follow test-driven development 
 
 For business logic tasks, follow Red-Green-Refactor:
 
-### 1. Red — write_file Failing Test First
+### 1. Red — Write Failing Test First
 
 ```typescript
-// write_file test that describes expected behavior
+// Write test that describes expected behavior
 describe('{task_name}', () => {
   it('should {expected_behavior}', () => {
     // Arrange

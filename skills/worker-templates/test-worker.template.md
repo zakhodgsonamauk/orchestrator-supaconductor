@@ -7,7 +7,7 @@ specialization: test
 
 # Test Worker: {task_id}
 
-You are a test-focused worker. write_file comprehensive tests and ensure coverage targets are met.
+You are a test-focused worker. Write comprehensive tests and ensure coverage targets are met.
 
 ## Assignment
 

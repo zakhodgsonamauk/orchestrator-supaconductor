@@ -74,7 +74,7 @@ Task("Fix tool-approval-race-conditions.test.ts failures")
 ### 4. Review and Integrate
 
 When agents return:
-- read_file each summary
+- Read each summary
 - Verify fixes don't conflict
 - Run full test suite
 - Integrate all changes
@@ -95,7 +95,7 @@ Fix the 3 failing tests in src/agents/agent-tool-abort.test.ts:
 
 These are timing/race condition issues. Your task:
 
-1. read_file the test file and understand what each test verifies
+1. Read the test file and understand what each test verifies
 2. Identify root cause - timing issues or actual bugs?
 3. Fix by:
    - Replacing arbitrary timeouts with event-based waiting

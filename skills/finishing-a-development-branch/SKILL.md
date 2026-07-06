@@ -153,7 +153,7 @@ Then: Cleanup worktree (Step 5)
 
 Check if in worktree:
 ```bash
-git worktree list | grep_search $(git branch --show-current)
+git worktree list | Grep $(git branch --show-current)
 ```
 
 If yes:

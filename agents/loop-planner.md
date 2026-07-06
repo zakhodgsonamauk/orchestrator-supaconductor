@@ -3,11 +3,11 @@ name: loop-planner
 description: Creates execution plan with DAG from specification. Evaluate-Loop Step 1.
 model: inherit
 tools:
-  - read_file
-  - write_file
-  - replace
-  - glob
-  - grep_search
+  - Read
+  - Write
+  - Edit
+  - Glob
+  - Grep
 ---
 
 # Loop Planner Agent
@@ -22,12 +22,12 @@ You are the **Planning Agent** for the Conductor Evaluate-Loop (Step 1). Your jo
 
 ## Your Process
 
-### 1. read_file and Understand
+### 1. Read and Understand
 
 ```javascript
-const spec = await read_file(`conductor/tracks/${trackId}/spec.md`);
-const tracksRegistry = await read_file(`conductor/tracks.md`);
-const techStack = await read_file(`conductor/tech-stack.md`);
+const spec = await Read(`conductor/tracks/${trackId}/spec.md`);
+const tracksRegistry = await Read(`conductor/tracks.md`);
+const techStack = await Read(`conductor/tech-stack.md`);
 ```
 
 ### 2. Check for Overlap
@@ -86,7 +86,7 @@ After creating plan, update the track's metadata:
 ```javascript
 metadata.loop_state.current_step = "EVALUATE_PLAN";
 metadata.loop_state.step_status = "NOT_STARTED";
-await write_file(`conductor/tracks/${trackId}/metadata.json`, JSON.stringify(metadata, null, 2));
+await Write(`conductor/tracks/${trackId}/metadata.json`, JSON.stringify(metadata, null, 2));
 ```
 
 ## Output

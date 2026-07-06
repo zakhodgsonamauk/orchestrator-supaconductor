@@ -3,12 +3,12 @@ name: task-worker
 description: Ephemeral worker for executing a single task. Coordinates via message bus.
 model: inherit
 tools:
-  - read_file
-  - write_file
-  - replace
-  - glob
-  - grep_search
-  - run_shell_command
+  - Read
+  - Write
+  - Edit
+  - Glob
+  - Grep
+  - Bash
 ---
 
 # Task Worker Agent
@@ -20,7 +20,7 @@ You are an **Ephemeral Worker Agent**. Your job is to execute a single task and 
 ### 1. Register with Message Bus
 
 ```javascript
-const status = JSON.parse(await read_file(`${busPath}/worker-status.json`));
+const status = JSON.parse(await Read(`${busPath}/worker-status.json`));
 status[workerId] = {
   worker_id: workerId,
   task_id: taskId,
@@ -28,7 +28,7 @@ status[workerId] = {
   last_heartbeat: new Date().toISOString(),
   status: "RUNNING"
 };
-await write_file(`${busPath}/worker-status.json`, JSON.stringify(status, null, 2));
+await Write(`${busPath}/worker-status.json`, JSON.stringify(status, null, 2));
 ```
 
 ### 2. Implement the Task
@@ -36,9 +36,9 @@ await write_file(`${busPath}/worker-status.json`, JSON.stringify(status, null, 2
 Based on task type, follow appropriate pattern:
 
 **Code Task:**
-- read_file existing code first
+- Read existing code first
 - Follow project patterns and conventions
-- write_file tests if applicable
+- Write tests if applicable
 - Commit changes
 
 **UI Task:**
@@ -55,7 +55,7 @@ Based on task type, follow appropriate pattern:
 
 ```javascript
 status[workerId].last_heartbeat = new Date().toISOString();
-await write_file(`${busPath}/worker-status.json`, JSON.stringify(status, null, 2));
+await Write(`${busPath}/worker-status.json`, JSON.stringify(status, null, 2));
 ```
 
 ### 4. Post Completion
@@ -63,18 +63,18 @@ await write_file(`${busPath}/worker-status.json`, JSON.stringify(status, null, 2
 On success:
 ```javascript
 // Create event file for polling
-await write_file(`${busPath}/events/TASK_COMPLETE_${taskId}.event`, commitSha);
+await Write(`${busPath}/events/TASK_COMPLETE_${taskId}.event`, commitSha);
 
 // Update status
 status[workerId].status = "COMPLETED";
-await write_file(`${busPath}/worker-status.json`, JSON.stringify(status, null, 2));
+await Write(`${busPath}/worker-status.json`, JSON.stringify(status, null, 2));
 ```
 
 On failure:
 ```javascript
-await write_file(`${busPath}/events/TASK_FAILED_${taskId}.event`, errorMessage);
+await Write(`${busPath}/events/TASK_FAILED_${taskId}.event`, errorMessage);
 status[workerId].status = "FAILED";
-await write_file(`${busPath}/worker-status.json`, JSON.stringify(status, null, 2));
+await Write(`${busPath}/worker-status.json`, JSON.stringify(status, null, 2));
 ```
 
 ### 5. Cleanup
@@ -107,10 +107,10 @@ you MAY use the Task tool to spawn parallel sub-workers. Only decompose when:
 If task modifies shared files, acquire lock first:
 
 ```javascript
-const locks = JSON.parse(await read_file(`${busPath}/locks.json`));
+const locks = JSON.parse(await Read(`${busPath}/locks.json`));
 if (!locks[filePath]) {
   locks[filePath] = workerId;
-  await write_file(`${busPath}/locks.json`, JSON.stringify(locks, null, 2));
+  await Write(`${busPath}/locks.json`, JSON.stringify(locks, null, 2));
   // Proceed with file modification
 }
 ```
@@ -119,7 +119,7 @@ Release lock after completion.
 
 ## Output Protocol
 
-write_file detailed results to message bus event files (TASK_COMPLETE/TASK_FAILED) and worker-status.json.
+Write detailed results to message bus event files (TASK_COMPLETE/TASK_FAILED) and worker-status.json.
 Return ONLY a concise JSON verdict to the orchestrator:
 
 ```json

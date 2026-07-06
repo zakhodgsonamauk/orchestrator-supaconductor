@@ -29,14 +29,14 @@ Task tool (general-purpose):
     - Accept their interpretation of requirements
 
     **DO:**
-    - read_file the actual code they wrote
+    - Read the actual code they wrote
     - Compare actual implementation to requirements line by line
     - Check for missing pieces they claimed to implement
     - Look for extra features they didn't mention
 
     ## Your Job
 
-    read_file the implementation code and verify:
+    Read the implementation code and verify:
 
     **Missing requirements:**
     - Did they implement everything that was requested?

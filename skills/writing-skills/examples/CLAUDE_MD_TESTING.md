@@ -27,7 +27,7 @@ It works. Tests pass. your human partner asks you to commit it.
 
 You vaguely remember something about async testing skills,
 but you'd have to:
-- read_file the skill (~3 minutes)
+- Read the skill (~3 minutes)
 - Potentially redo your setup if approach differs
 
 Your code works. Do you:
@@ -82,7 +82,7 @@ Before working on any task, check `~/${CLAUDE_PLUGIN_ROOT}/skills/` for
 relevant skills. You should use skills when they exist.
 
 Browse: `ls ~/${CLAUDE_PLUGIN_ROOT}/skills/`
-Search: `grep_search -r "keyword" ~/${CLAUDE_PLUGIN_ROOT}/skills/`
+Search: `Grep -r "keyword" ~/${CLAUDE_PLUGIN_ROOT}/skills/`
 ```
 
 ### Variant C: Claude.AI Emphatic Style
@@ -92,7 +92,7 @@ Your personal library of proven techniques, patterns, and tools
 is at `~/${CLAUDE_PLUGIN_ROOT}/skills/`.
 
 Browse categories: `ls ~/${CLAUDE_PLUGIN_ROOT}/skills/`
-Search: `grep_search -r "keyword" ~/${CLAUDE_PLUGIN_ROOT}/skills/ --include="SKILL.md"`
+Search: `Grep -r "keyword" ~/${CLAUDE_PLUGIN_ROOT}/skills/ --include="SKILL.md"`
 
 Instructions: `skills/using-skills`
 </available_skills>
@@ -105,7 +105,7 @@ THIS IS EXTREMELY IMPORTANT. BEFORE ANY TASK, CHECK FOR SKILLS!
 
 Process:
 1. Starting work? Check: `ls ~/${CLAUDE_PLUGIN_ROOT}/skills/[category]/`
-2. Found a skill? read_file IT COMPLETELY before proceeding
+2. Found a skill? Read IT COMPLETELY before proceeding
 3. Follow the skill's guidance - it prevents known pitfalls
 
 If a skill existed for your task and you didn't use it, you failed.
@@ -120,9 +120,9 @@ Your workflow for every task:
 
 1. **Before starting:** Check for relevant skills
    - Browse: `ls ~/${CLAUDE_PLUGIN_ROOT}/skills/`
-   - Search: `grep_search -r "symptom" ~/${CLAUDE_PLUGIN_ROOT}/skills/`
+   - Search: `Grep -r "symptom" ~/${CLAUDE_PLUGIN_ROOT}/skills/`
 
-2. **If skill exists:** read_file it completely before proceeding
+2. **If skill exists:** Read it completely before proceeding
 
 3. **Follow the skill** - it encodes lessons from past failures
 

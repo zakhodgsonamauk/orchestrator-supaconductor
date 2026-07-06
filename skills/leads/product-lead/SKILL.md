@@ -69,7 +69,7 @@ When consulted, the Product Lead follows this process:
 - Check spec.md for guidance
 
 ### 2. Check Spec Intent
-- read_file relevant section of spec.md
+- Read relevant section of spec.md
 - Identify what was intended
 - Determine if question is within spec boundaries
 

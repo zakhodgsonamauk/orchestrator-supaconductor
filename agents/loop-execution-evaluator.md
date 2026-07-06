@@ -3,12 +3,12 @@ name: loop-execution-evaluator
 description: Verifies implementation quality by dispatching specialized evaluators. Evaluate-Loop Step 4.
 model: inherit
 tools:
-  - read_file
-  - write_file
-  - replace
-  - glob
-  - grep_search
-  - run_shell_command
+  - Read
+  - Write
+  - Edit
+  - Glob
+  - Grep
+  - Bash
 ---
 
 # Loop Execution Evaluator Agent
@@ -28,15 +28,15 @@ Based on track type, dispatch appropriate evaluators:
 
 ## Dispatch Evaluators
 
-read_file the relevant skill and apply its checks:
+Read the relevant skill and apply its checks:
 
 ```javascript
 // For UI tracks
-const uiSkill = await read_file(`${CLAUDE_PLUGIN_ROOT}/skills/eval-ui-ux/SKILL.md`);
+const uiSkill = await Read(`${CLAUDE_PLUGIN_ROOT}/skills/eval-ui-ux/SKILL.md`);
 // Apply all 8 passes defined in the skill
 
 // For code quality
-const codeSkill = await read_file(`${CLAUDE_PLUGIN_ROOT}/skills/eval-code-quality/SKILL.md`);
+const codeSkill = await Read(`${CLAUDE_PLUGIN_ROOT}/skills/eval-code-quality/SKILL.md`);
 // Apply all 6 passes defined in the skill
 ```
 
@@ -73,7 +73,7 @@ const codeSkill = await read_file(`${CLAUDE_PLUGIN_ROOT}/skills/eval-code-qualit
 
 ## Output
 
-write_file evaluation report to plan.md:
+Write evaluation report to plan.md:
 
 ```markdown
 ## Execution Evaluation Report
@@ -112,7 +112,7 @@ If `fix_cycle_count >= 5`, mark track as `completed-with-warnings` instead of co
 
 ## Output Protocol
 
-write_file detailed evaluation results to `conductor/tracks/{trackId}/evaluation-report.md`.
+Write detailed evaluation results to `conductor/tracks/{trackId}/evaluation-report.md`.
 Return ONLY a concise JSON verdict to the orchestrator:
 
 ```json

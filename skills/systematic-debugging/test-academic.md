@@ -2,7 +2,7 @@
 
 You have access to the systematic debugging skill at skills/debugging/systematic-debugging
 
-read_file the skill and answer these questions based SOLELY on what the skill says:
+Read the skill and answer these questions based SOLELY on what the skill says:
 
 1. What are the four phases of systematic debugging?
 2. What must you do BEFORE attempting any fix?
