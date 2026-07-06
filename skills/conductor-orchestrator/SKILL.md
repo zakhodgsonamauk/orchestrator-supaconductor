@@ -995,7 +995,13 @@ Append a decision record to the `autonomous_decisions` array in metadata.json:
 ### `escalateToBoard(question)`
 
 Dispatch a board meeting for autonomous resolution:
-1. Spawn: `claude --print --model opus "/orchestrator-supaconductor:board-meeting {question}"`
+1. Spawn (model resolved per config/overlay via the resolver — omit `--model` when it returns `inherit`):
+   ```bash
+   resolver="${CLAUDE_PLUGIN_ROOT:-.}/scripts/resolve-model.sh"
+   model=$(bash "$resolver" board-meeting)
+   [ "$model" = inherit ] && claude --print "/orchestrator-supaconductor:board-meeting {question}" \
+                          || claude --print --model "$model" "/orchestrator-supaconductor:board-meeting {question}"
+   ```
 2. Parse board verdict (APPROVED / REJECTED)
 3. If APPROVED → continue with board conditions as constraints
 4. If REJECTED → re-plan incorporating all board feedback
