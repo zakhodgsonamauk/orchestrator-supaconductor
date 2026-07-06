@@ -2,7 +2,7 @@
 name: plan-sprint
 description: "Create multiple tracks from a list of features — generates spec, plan, and metadata for each track in parallel"
 user_invocable: true
-model: opus
+model: inherit
 arguments:
   - name: features
     description: "Comma-separated or numbered list of features to create tracks for"

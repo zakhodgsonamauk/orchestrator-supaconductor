@@ -24,7 +24,7 @@ The design placed the resolver at `conductor/bin/resolve-model.sh`. `conductor/`
 
 ### Task 1: Test harness + role map + config role-default resolution
 
-**Status:** [ ]
+**Status:** [x]
 
 **Files:**
 - Create: `scripts/resolve-model.sh`
@@ -149,7 +149,7 @@ git commit -m "feat(models): jq-free resolver, role defaults + legacy back-compa
 
 ### Task 2: Session overlay layer
 
-**Status:** [ ]
+**Status:** [x]
 
 **Files:**
 - Modify: `scripts/resolve-model.sh`
@@ -188,7 +188,7 @@ git commit -m "feat(models): session overlay layer in resolver"
 
 ### Task 3: Per-command pin layer (highest precedence)
 
-**Status:** [ ]
+**Status:** [x]
 
 **Files:** Modify `scripts/resolve-model.sh`, `scripts/test-resolve-model.sh`
 
@@ -234,7 +234,7 @@ git commit -m "feat(models): per-command pin layer (top precedence)"
 
 ### Task 4: Token validation (unknown token -> inherit)
 
-**Status:** [ ]
+**Status:** [x]
 
 **Files:** Modify `scripts/resolve-model.sh`, `scripts/test-resolve-model.sh`
 
@@ -281,7 +281,7 @@ git commit -m "feat(models): validate model tokens, fall back to inherit"
 
 ### Task 5: Create the `/use-models` command definition
 
-**Status:** [ ]
+**Status:** [x]
 
 **Files:**
 - Create: `commands/use-models.md`
@@ -361,7 +361,7 @@ git commit -m "feat(models): add /use-models session override command"
 
 ### Task 6: config schema in ALL setup paths + live config, ignore overlay
 
-**Status:** [ ]
+**Status:** [x]
 
 **Files:**
 - Modify: `conductor/config.json` (this project)
@@ -435,7 +435,7 @@ git commit -m "feat(models): config.models schema in all setup paths + ignore ov
 
 ### Task 7: Change all `model:` frontmatter to `inherit`
 
-**Status:** [ ]
+**Status:** [x]
 
 **Files (all `model: opus|sonnet` frontmatter → `model: inherit`):**
 - Agents: `agents/ceo.md`, `cmo.md`, `board-meeting.md`, `cto.md`, `ux-designer.md`, `loop-plan-evaluator.md`, `loop-planner.md`, `loop-executor.md`, `conductor-orchestrator.md`, `loop-fixer.md`, `loop-execution-evaluator.md`, `name-picker.md`, `parallel-dispatcher.md`, `task-worker.md` (leave `code-reviewer.md` — already `inherit`)
@@ -473,7 +473,7 @@ git commit -m "refactor(models): frontmatter model -> inherit (interactive follo
 
 ### Task 8: Replace hardcoded model logic in conductor-orchestrator.md
 
-**Status:** [ ]
+**Status:** [x]
 
 **Files:**
 - Modify: `agents/conductor-orchestrator.md:177-186` (runnable dispatch), and the documentation examples at `:384-448` and `:660`
@@ -534,7 +534,7 @@ git commit -m "feat(models): orchestrator dispatch uses resolve-model.sh"
 
 ### Task 9: Fix remaining dispatch literal in orchestrator SKILL doc
 
-**Status:** [ ]
+**Status:** [x]
 
 **Files:**
 - Modify: `skills/conductor-orchestrator/SKILL.md:998`
@@ -567,7 +567,7 @@ git commit -m "feat(models): board-meeting spawn uses resolver in orchestrator s
 
 ### Task 10: Document config + /use-models + limitation + Requirements in README
 
-**Status:** [ ]
+**Status:** [x]
 
 **Files:**
 - Modify: `README.md` (Model Selection section near mode/config ~204; **Requirements section ~468**)
@@ -605,7 +605,7 @@ git commit -m "docs(models): document configurable model selection + /use-models
 
 ### Task 11: Full regression run
 
-**Status:** [ ]
+**Status:** [x]
 
 **Step 1:** Run the resolver test suite:
 ```bash

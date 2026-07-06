@@ -1,7 +1,7 @@
 ---
 name: loop-executor
 description: Implements tasks from the plan sequentially. Evaluate-Loop Step 3.
-model: sonnet
+model: inherit
 tools:
   - read_file
   - write_file

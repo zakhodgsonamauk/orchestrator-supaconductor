@@ -6,7 +6,7 @@ arguments:
     description: "Optional track ID (defaults to active track)"
     required: false
 user_invocable: true
-model: sonnet
+model: inherit
 ---
 
 # /conductor:implement — Automated Evaluate-Loop

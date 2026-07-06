@@ -212,6 +212,58 @@ Switch modes by editing `conductor/config.json` in your project:
 
 ---
 
+## Model Selection
+
+Models are **configurable**, not hardcoded. Each command maps to a role — **planning**
+or **execution** — and each role has a default model. Set them in `conductor/config.json`:
+
+```json
+{
+  "models": {
+    "planning": "opus",
+    "execution": "sonnet",
+    "overrides": {
+      "board-meeting": "opus",
+      "new-track": "inherit"
+    }
+  }
+}
+```
+
+- **`planning` / `execution`** — default model per role.
+- **`overrides`** — pin an individual command to any model or `inherit`. One entry per line.
+- **Tokens** — aliases `opus` `sonnet` `haiku` `fable`, exact ids
+  (`claude-opus-4-8`, `claude-sonnet-5`, `claude-haiku-4-5-20251001`, `claude-fable-5`),
+  or `inherit` (use the current session model).
+- **Legacy** — top-level `planning_model` / `execution_model` are still honored.
+
+### `/use-models` — per-session override
+
+```
+/use-models fable+sonnet   # planning=fable, execution=sonnet for this session
+/use-models opus           # both roles = opus
+/use-models show           # print the resolved model for every command
+/use-models reset          # clear the session overlay
+```
+
+This writes `conductor/.session-models.json` (not committed). It sets the two role
+models; per-command `overrides` in `config.json` still win.
+
+**Precedence:** command pin > session overlay > role default > `inherit`.
+
+### Interactive vs orchestrated (important)
+
+- **Orchestrated path** (the autonomous Evaluate-Loop, which spawns child
+  `claude --print` processes) fully honors config, overrides, and `/use-models` via
+  `scripts/resolve-model.sh`.
+- **Interactive path** (you typing a command in your own session) inherits your current
+  session model — frontmatter is `inherit`, so the command runs on whatever model your
+  session uses. Per-command overrides and the overlay cannot change that here, because a
+  command's frontmatter is static. Running your session on Fable therefore runs
+  interactive commands on Fable — no more forced Opus/Sonnet.
+
+---
+
 ## Board of Directors
 
 For major decisions — and automatically for high-stakes tracks like production deploys, security architecture changes, breaking API migrations, or data-loss operations — a virtual board deliberates with written rationale:
@@ -469,6 +521,7 @@ Your existing tracks and data are safe — only the command prefix changed from 
 
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) CLI
 - Git
+- Bash — on Windows this is Git Bash (bundled with Git for Windows); the hooks and the model resolver run under it. No `jq` or other extra tools required.
 
 ## Third-Party
 

@@ -1,7 +1,7 @@
 ---
 name: board-meeting
 description: Full Board of Directors deliberation with 5 expert directors assessing, discussing, and voting.
-model: opus
+model: inherit
 tools:
   - read_file
   - write_file

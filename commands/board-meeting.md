@@ -1,7 +1,7 @@
 ---
 name: board-meeting
 description: "Full board deliberation with discussion rounds - directors debate and reach consensus"
-model: opus
+model: inherit
 arguments:
   - name: proposal
     type: string

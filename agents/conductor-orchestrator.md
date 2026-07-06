@@ -1,7 +1,7 @@
 ---
 name: conductor-orchestrator
 description: Master coordinator for the Conductor Evaluate-Loop. Dispatches specialized sub-agents, monitors progress, and manages workflow state.
-model: sonnet
+model: inherit
 tools:
   - read_file
   - write_file
@@ -174,16 +174,24 @@ invoke_superpower() {
         mkdir -p "${track_dir}/brainstorm/"
     fi
 
-    # Determine model: opus for planning/brainstorming, sonnet for execution/debugging
-    local model="sonnet"
-    case "$superpower" in
-        "writing-plans"|"brainstorming") model="opus" ;;
-        "executing-plans"|"systematic-debugging") model="sonnet" ;;
-    esac
+    # Resolve model via shared resolver (config + session overlay + per-command pins).
+    # Plugin scripts live under CLAUDE_PLUGIN_ROOT (see hooks/hooks.json); fall back to
+    # a path relative to this file for direct execution. CWD stays the project dir so the
+    # resolver reads conductor/config.json + conductor/.session-models.json relative to it.
+    local plugin_root="${CLAUDE_PLUGIN_ROOT:-$(cd "$(dirname "$0")/.." && pwd)}"
+    local resolver="${plugin_root}/scripts/resolve-model.sh"
+    local model="inherit"
+    [ -f "$resolver" ] && model="$(bash "$resolver" "$superpower" 2>/dev/null)"
+    [ -z "$model" ] && model="inherit"
 
-    # Invoke superpower with parameters and model
+    # Invoke superpower with parameters. Omit --model when the resolver says "inherit"
+    # so the child process uses the current session model.
     echo "→ Invoking orchestrator-supaconductor:$superpower for track $track_id (model: $model)"
-    claude --print --model "$model" "/orchestrator-supaconductor:$superpower $params"
+    if [ "$model" = "inherit" ]; then
+        claude --print "/orchestrator-supaconductor:$superpower $params"
+    else
+        claude --print --model "$model" "/orchestrator-supaconductor:$superpower $params"
+    fi
     local exit_code=$?
 
     # Parse response for success/failure
@@ -381,16 +389,26 @@ Based on the state detected, dispatch the correct agent.
 | `task-worker` | **sonnet** | Individual task execution |
 | `conductor-orchestrator` | **sonnet** | State machine orchestration |
 
-When dispatching via `claude --print`, use `--model` flag to enforce:
+The models above are the **default** role assignments. They are configurable — do NOT
+hardcode `--model`. Resolve the model per command via `scripts/resolve-model.sh`, which
+applies `conductor/config.json` (`models.planning`/`models.execution`/`models.overrides`),
+the `/use-models` session overlay, and precedence. When it returns `inherit`, omit
+`--model` entirely so the child uses the session model:
 
 ```bash
-# Planning (opus) — deep thinking
-claude --print --model opus "/orchestrator-supaconductor:writing-plans ..."
-claude --print --model opus "/loop-plan-evaluator ..."
+resolver="${CLAUDE_PLUGIN_ROOT:-.}/scripts/resolve-model.sh"
+dispatch() { # $1=command name (for model resolution), $2=full "/command ..." string
+  local model; model="$(bash "$resolver" "$1" 2>/dev/null)"; [ -z "$model" ] && model="inherit"
+  if [ "$model" = "inherit" ]; then claude --print "$2"
+  else claude --print --model "$model" "$2"; fi
+}
 
-# Execution (sonnet) — fast implementation
-claude --print --model sonnet "/orchestrator-supaconductor:executing-plans ..."
-claude --print --model sonnet "/orchestrator-supaconductor:systematic-debugging ..."
+# Planning
+dispatch writing-plans "/orchestrator-supaconductor:writing-plans ..."
+dispatch loop-plan-evaluator "/loop-plan-evaluator ..."
+# Execution
+dispatch executing-plans "/orchestrator-supaconductor:executing-plans ..."
+dispatch systematic-debugging "/orchestrator-supaconductor:systematic-debugging ..."
 ```
 
 ### 2.3 How to Dispatch an Agent
@@ -409,43 +427,43 @@ claude --print "/<agent-command> <track-id>"
 #### Dispatch orchestrator-supaconductor:brainstorming (optional pre-step — OPUS):
 
 ```bash
-# Strategic ideation uses opus for deeper thinking
-claude --print --model opus "/orchestrator-supaconductor:brainstorming --context='Architectural decision for {trackId}' --output-dir='conductor/tracks/{trackId}/brainstorm/'"
+# Model resolved per config/overlay (default: planning role)
+dispatch brainstorming "/orchestrator-supaconductor:brainstorming --context='Architectural decision for {trackId}' --output-dir='conductor/tracks/{trackId}/brainstorm/'"
 ```
 
 #### Dispatch orchestrator-supaconductor:writing-plans (replaces loop-planner — OPUS):
 
 ```bash
-# Planning uses opus for strategic plan quality
-claude --print --model opus "/orchestrator-supaconductor:writing-plans --spec='conductor/tracks/{trackId}/spec.md' --output-dir='conductor/tracks/{trackId}/' --context-files='conductor/tech-stack.md,conductor/workflow.md,conductor/product.md'"
+# Model resolved per config/overlay (default: planning role)
+dispatch writing-plans "/orchestrator-supaconductor:writing-plans --spec='conductor/tracks/{trackId}/spec.md' --output-dir='conductor/tracks/{trackId}/' --context-files='conductor/tech-stack.md,conductor/workflow.md,conductor/product.md'"
 ```
 
 #### Dispatch loop-plan-evaluator (keep existing — OPUS):
 
 ```bash
-# Plan evaluation uses opus for architectural judgment
-claude --print --model opus "/loop-plan-evaluator {trackId}"
+# Model resolved per config/overlay (default: planning role)
+dispatch loop-plan-evaluator "/loop-plan-evaluator {trackId}"
 ```
 
 #### Dispatch orchestrator-supaconductor:executing-plans (replaces loop-executor — SONNET):
 
 ```bash
-# Execution uses sonnet — follows the plan, saves tokens
-claude --print --model sonnet "/orchestrator-supaconductor:executing-plans --plan='conductor/tracks/{trackId}/plan.md' --track-dir='conductor/tracks/{trackId}/' --metadata='conductor/tracks/{trackId}/metadata.json'"
+# Model resolved per config/overlay (default: execution role)
+dispatch executing-plans "/orchestrator-supaconductor:executing-plans --plan='conductor/tracks/{trackId}/plan.md' --track-dir='conductor/tracks/{trackId}/' --metadata='conductor/tracks/{trackId}/metadata.json'"
 ```
 
 #### Dispatch loop-execution-evaluator (keep existing — SONNET):
 
 ```bash
-# Execution evaluation uses sonnet — checklist-based
-claude --print --model sonnet "/loop-execution-evaluator {trackId}"
+# Model resolved per config/overlay (default: execution role)
+dispatch loop-execution-evaluator "/loop-execution-evaluator {trackId}"
 ```
 
 #### Dispatch orchestrator-supaconductor:systematic-debugging (replaces loop-fixer — SONNET):
 
 ```bash
-# Debugging/fixing uses sonnet — follows evaluation report
-claude --print --model sonnet "/orchestrator-supaconductor:systematic-debugging --failures='conductor/tracks/{trackId}/evaluation-report.md' --track-dir='conductor/tracks/{trackId}/'"
+# Model resolved per config/overlay (default: execution role)
+dispatch systematic-debugging "/orchestrator-supaconductor:systematic-debugging --failures='conductor/tracks/{trackId}/evaluation-report.md' --track-dir='conductor/tracks/{trackId}/'"
 ```
 
 **Parameter Explanation:**
@@ -656,8 +674,8 @@ ACTION: write_file updated metadata.json
 
 #### `escalateToBoard(question)`
 ```
-ACTION: Dispatch board-meeting subagent via run_shell_command:
-  claude --print --model opus "/orchestrator-supaconductor:board-meeting {question}"
+ACTION: Dispatch board-meeting subagent via run_shell_command (model resolved per config/overlay):
+  dispatch board-meeting "/orchestrator-supaconductor:board-meeting {question}"
 PARSE: Board verdict (APPROVED / REJECTED)
 IF APPROVED: Continue with board conditions applied
 IF REJECTED: Re-plan with board feedback as constraints

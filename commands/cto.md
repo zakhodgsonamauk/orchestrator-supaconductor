@@ -1,7 +1,7 @@
 ---
 name: cto
 description: Get technical architecture and engineering advice from an expert CTO advisor with 30 years of technology leadership experience
-model: opus
+model: inherit
 arguments:
   - name: question
     description: Your technical question or topic to discuss

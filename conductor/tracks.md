@@ -6,10 +6,10 @@ Active and completed development tracks.
 
 | Track ID | Name | Type | Status | Step | Created |
 |----------|------|------|--------|------|---------|
-| configurable-models_20260706 | Configurable Model Selection | infrastructure | planned | EVALUATE_PLAN | 2026-07-06 |
+| (none) | | | | | |
 
 ## Completed Tracks
 
 | Track ID | Name | Completed | Summary |
 |----------|------|-----------|---------|
-| (none yet) | | | |
+| configurable-models_20260706 | Configurable Model Selection | 2026-07-06 | Config/overlay-driven model selection via jq-free resolver + /use-models; frontmatter→inherit; fresh-install coverage |

@@ -1,7 +1,7 @@
 ---
 name: phase-review
 description: "Run post-execution quality gate - verifies all deliverables before marking a track complete"
-model: opus
+model: inherit
 arguments:
   - name: track_id
     description: "Optional track ID to review (defaults to active track)"

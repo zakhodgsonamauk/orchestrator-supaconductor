@@ -1,7 +1,7 @@
 ---
 name: new-track
 description: "Create a new development track with spec, plan, and metadata"
-model: sonnet
+model: inherit
 arguments:
   - name: new-track
     description: "Brief description of what you want to build"

@@ -2,7 +2,7 @@
 name: executing-plans
 user_invocable: true
 description: Execute plan tasks autonomously to completion
-model: sonnet
+model: inherit
 ---
 
 Invoke the orchestrator-supaconductor:executing-plans skill and follow it exactly as presented to you
