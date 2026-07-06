@@ -34,6 +34,7 @@ Make the model used by each SupaConductor command/agent configurable instead of 
 - Making interactive-path per-command overrides work (frontmatter is static — documented limitation).
 
 ## Technical Notes
-- Git Bash available on Windows; resolver is bash + jq (fallback to grep/sed if jq absent).
-- `conductor/` is gitignored in this repo; resolver + overlay live under `conductor/bin` and `conductor/` — but the resolver script is plugin source, so it must be force-added / relocated to a tracked path. See plan Task 0.
+- Git Bash available on Windows; resolver is **jq-free bash** (sed-based parsing), matching `hooks/session-start.sh` which deliberately avoids jq. No new dependency for fresh installs.
+- Resolver ships as plugin source at `scripts/resolve-model.sh` (tracked). Config `conductor/config.json` + overlay `conductor/.session-models.json` are per-project runtime (in gitignored `conductor/`).
+- **Fresh-install coverage** (why this track matters for deployment): `scripts/setup.sh` currently creates no `config.json` — Task 6 fixes that; README Requirements omit bash — Task 10 fixes that. Plugin identity (marketplace source.repo etc.) already repointed to the fork outside this track.
 - Full design: `conductor/designs/2026-07-06-configurable-models-design.md`.

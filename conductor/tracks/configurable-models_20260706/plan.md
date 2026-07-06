@@ -6,7 +6,7 @@
 
 **Architecture:** A single bash resolver (`scripts/resolve-model.sh`) reads `conductor/config.json` + `conductor/.session-models.json`, maps each command to a planning/execution role, applies precedence (command-pin > session-overlay > role-default > inherit), and prints a model id or `inherit`. Static `model:` frontmatter across `agents/*.md` and `commands/*.md` becomes `inherit` (interactive path follows the session model). The orchestrator dispatch swaps hardcoded `--model` values for the resolver output. `/use-models` writes/clears the overlay.
 
-**Tech Stack:** Bash (Git Bash on Windows), `jq` for JSON, Markdown (skill/agent/command definitions). Dependency-free plain-bash test harness.
+**Tech Stack:** Bash (Git Bash on Windows), **jq-free** JSON parsing via `sed` (matches the plugin's existing convention in `hooks/session-start.sh` — no new dependency), Markdown (skill/agent/command definitions). Dependency-free plain-bash test harness.
 
 **Design reference:** `conductor/designs/2026-07-06-configurable-models-design.md`
 
@@ -18,7 +18,9 @@ The design placed the resolver at `conductor/bin/resolve-model.sh`. `conductor/`
 
 ---
 
-## Phase 1: Resolver script (TDD)
+## Phase 1: Resolver script (TDD, jq-free)
+
+> **jq-free rationale:** `hooks/session-start.sh` already parses JSON with `sed` specifically to avoid a jq dependency. Fresh machines (esp. Windows Git Bash) often lack jq; a jq-based resolver would silently degrade to `inherit` and the feature would appear broken. So the resolver uses a small `sed`-based extractor. Config/overlay JSON must keep each `"key": "value"` pair on one line (our templates do).
 
 ### Task 1: Test harness + role map + config role-default resolution
 
@@ -31,7 +33,7 @@ The design placed the resolver at `conductor/bin/resolve-model.sh`. `conductor/`
 `scripts/test-resolve-model.sh`:
 ```bash
 #!/usr/bin/env bash
-# Plain-bash test harness for resolve-model.sh. No external deps beyond jq.
+# Plain-bash test harness for resolve-model.sh. Zero external deps.
 set -u
 HERE="$(cd "$(dirname "$0")" && pwd)"
 RESOLVE="$HERE/resolve-model.sh"
@@ -57,6 +59,18 @@ assert_eq "planning cmd -> planning role default" "opus"   "$(run "$proj" writin
 assert_eq "execution cmd -> execution role default" "sonnet" "$(run "$proj" loop-executor)"
 assert_eq "unknown command -> inherit" "inherit" "$(run "$proj" totally-unknown-cmd)"
 
+# --- Fixture: legacy flat keys (back-compat) ---
+projL="$TMP/pL"; mkdir -p "$projL/conductor"
+cat > "$projL/conductor/config.json" <<'JSON'
+{ "planning_model": "opus", "execution_model": "sonnet" }
+JSON
+assert_eq "legacy planning_model back-compat" "opus"   "$(run "$projL" writing-plans)"
+assert_eq "legacy execution_model back-compat" "sonnet" "$(run "$projL" loop-executor)"
+
+# --- Fixture: no config at all -> inherit ---
+projN="$TMP/pN"; mkdir -p "$projN/conductor"
+assert_eq "no config -> inherit" "inherit" "$(run "$projN" writing-plans)"
+
 echo "----"; echo "PASS=$PASS FAIL=$FAIL"
 [ "$FAIL" -eq 0 ]
 ```
@@ -71,7 +85,7 @@ Expected: FAIL — `resolve-model.sh` missing / prints nothing.
 `scripts/resolve-model.sh`:
 ```bash
 #!/usr/bin/env bash
-# Resolve the model for a SupaConductor command.
+# Resolve the model for a SupaConductor command. jq-free (sed-based).
 # Usage: resolve-model.sh <command-name>
 # Prints a model id (opus|sonnet|haiku|fable|claude-*) or "inherit".
 # Reads ./conductor/config.json and ./conductor/.session-models.json relative to cwd.
@@ -97,40 +111,36 @@ role_for() {
   esac
 }
 
+# json_val <file> <key> — first "key": "value" match on a single line. jq-free.
+# Key is regex-escaped for the '.' and '-' that appear in command names.
+json_val() {
+  [ -f "$1" ] || return 0
+  local key; key="$(printf '%s' "$2" | sed 's/[.[\*^$/]/\\&/g')"
+  sed -n "s/.*\"${key}\"[[:space:]]*:[[:space:]]*\"\([^\"]*\)\".*/\1/p" "$1" | head -1
+}
+
 emit() { echo "$1"; exit 0; }
 
 ROLE="$(role_for "$CMD")"
 [ -z "$ROLE" ] && emit inherit   # unknown command
 
-have_jq() { command -v jq >/dev/null 2>&1; }
+# 3. role default: config.models.<role>, then legacy <role>_model
+rd="$(json_val "$CONFIG" "$ROLE")"
+[ -z "$rd" ] && rd="$(json_val "$CONFIG" "${ROLE}_model")"
+[ -n "$rd" ] && emit "$rd"
 
-if ! have_jq; then
-  # Without jq we cannot safely parse; inherit is the safe default.
-  echo "resolve-model: jq not found, defaulting to inherit" >&2
-  emit inherit
-fi
-
-# 3. role default (config.models.<role>, with legacy fallback)
-role_default=inherit
-if [ -f "$CONFIG" ]; then
-  v="$(jq -r --arg r "$ROLE" '
-    (.models[$r]) //
-    (if $r=="planning" then .planning_model else .execution_model end) //
-    empty' "$CONFIG" 2>/dev/null)"
-  [ -n "$v" ] && role_default="$v"
-fi
-emit "$role_default"
+emit inherit
 ```
 
 **Step 4: Run test to verify it passes**
 
 Run: `bash scripts/test-resolve-model.sh`
-Expected: PASS — 3 ok lines, `PASS=3 FAIL=0`.
+Expected: PASS — `PASS=6 FAIL=0`.
 
 **Step 5: Commit**
 ```bash
 git add scripts/resolve-model.sh scripts/test-resolve-model.sh
-git commit -m "feat(models): resolver role-default resolution + test harness"
+git commit -m "feat(models): jq-free resolver, role defaults + legacy back-compat"
 ```
 
 ---
@@ -158,10 +168,8 @@ assert_eq "overlay execution passthrough" "sonnet" "$(run "$proj2" loop-executor
 **Step 3: Implement** — insert overlay layer in `resolve-model.sh` BEFORE the role-default block:
 ```bash
 # 2. session overlay (conductor/.session-models.json)
-if [ -f "$OVERLAY" ]; then
-  ov="$(jq -r --arg r "$ROLE" '.[$r] // empty' "$OVERLAY" 2>/dev/null)"
-  [ -n "$ov" ] && emit "$ov"
-fi
+ov="$(json_val "$OVERLAY" "$ROLE")"
+[ -n "$ov" ] && emit "$ov"
 ```
 
 **Step 4: Run** → PASS.
@@ -184,7 +192,10 @@ git commit -m "feat(models): session overlay layer in resolver"
 proj3="$TMP/p3"; mkdir -p "$proj3/conductor"
 cat > "$proj3/conductor/config.json" <<'JSON'
 { "models": { "planning": "opus", "execution": "sonnet",
-  "overrides": { "board-meeting": "opus", "new-track": "inherit" } } }
+  "overrides": {
+    "board-meeting": "opus",
+    "new-track": "inherit"
+  } } }
 JSON
 cat > "$proj3/conductor/.session-models.json" <<'JSON'
 { "planning": "fable", "execution": "sonnet" }
@@ -194,15 +205,15 @@ assert_eq "command pin can be inherit"  "inherit" "$(run "$proj3" new-track)"
 assert_eq "unpinned still uses overlay" "fable"  "$(run "$proj3" writing-plans)"
 ```
 
+> **Note:** the override entries are one-per-line so the `sed` extractor matches each key. Setup templates must emit `overrides` the same way (Task 6).
+
 **Step 2: Run** → FAIL (board-meeting returns fable).
 
-**Step 3: Implement** — insert command-pin layer BEFORE the overlay layer:
+**Step 3: Implement** — insert command-pin layer BEFORE the overlay layer. The pin is the value whose key equals the command name; it only appears inside `overrides` in our schema:
 ```bash
 # 1. per-command pin (config.models.overrides.<command>)
-if [ -f "$CONFIG" ]; then
-  pin="$(jq -r --arg c "$CMD" '.models.overrides[$c] // empty' "$CONFIG" 2>/dev/null)"
-  [ -n "$pin" ] && emit "$pin"
-fi
+pin="$(json_val "$CONFIG" "$CMD")"
+[ -n "$pin" ] && emit "$pin"
 ```
 
 **Step 4: Run** → PASS.
@@ -338,15 +349,16 @@ git commit -m "feat(models): add /use-models session override command"
 
 ## Phase 3: Config schema + gitignore
 
-### Task 6: Update config schema in setup + live config, ignore overlay
+### Task 6: config schema in ALL setup paths + live config, ignore overlay
 
 **Files:**
 - Modify: `conductor/config.json` (this project)
-- Modify: `commands/conductor-setup.md:46-54`
+- Modify: `commands/conductor-setup.md:46-54` (command template)
 - Modify: `commands/setup.md` (model block, ~72-82)
+- Modify: `scripts/setup.sh` (**currently creates NO config.json — the shell install path leaves fresh projects without a `models` block; this is the fresh-machine gap**)
 - Modify: `.gitignore`
 
-**Step 1:** New `models` block replaces flat `planning_model`/`execution_model` in the setup templates:
+**Step 1:** Canonical `models` block replaces flat `planning_model`/`execution_model` everywhere:
 ```json
 {
   "mode": "agentic",
@@ -360,25 +372,45 @@ git commit -m "feat(models): add /use-models session override command"
 ```
 (Resolver still reads legacy flat keys for back-compat — Task 1.)
 
-**Step 2:** Apply the same block to this project's `conductor/config.json`.
+**Step 2:** Add a `config.json` creation block to `scripts/setup.sh` (mirror the existing `if [ ! -f ... ]` guards; do NOT overwrite an existing config). Insert after the `knowledge/patterns.md` block:
+```bash
+# Create config.json if it doesn't exist
+if [ ! -f "$PROJECT_DIR/conductor/config.json" ]; then
+  cat > "$PROJECT_DIR/conductor/config.json" << 'CONFIG_EOF'
+{
+  "mode": "agentic",
+  "max_fix_cycles": 5,
+  "models": {
+    "planning": "opus",
+    "execution": "sonnet",
+    "overrides": {}
+  }
+}
+CONFIG_EOF
+  echo "  Created conductor/config.json"
+fi
+```
 
-**Step 3:** Ensure `.gitignore` ignores the overlay (already covered by `conductor/`, but add explicit line for clarity under a comment):
+**Step 3:** Apply the canonical block to `commands/conductor-setup.md` + `commands/setup.md` templates, and to this project's `conductor/config.json`.
+
+**Step 4:** Ensure `.gitignore` ignores the overlay (already covered by `conductor/`, but add an explicit commented line):
 ```
 # Session model overlay (runtime, per-session)
 conductor/.session-models.json
 ```
 
-**Step 4: Verify**
+**Step 5: Verify** (jq-free — do not assume jq present)
 ```bash
-jq . conductor/config.json                       # valid JSON, has .models
 bash scripts/resolve-model.sh writing-plans       # opus
 git check-ignore conductor/.session-models.json   # ignored
+# Fresh-install simulation: setup.sh must produce a config with a models block
+d=$(mktemp -d); bash scripts/setup.sh "$d"; grep -q '"models"' "$d/conductor/config.json" && echo "setup.sh writes models OK"; rm -rf "$d"
 ```
 
-**Step 5: Commit**
+**Step 6: Commit**
 ```bash
-git add conductor/config.json commands/conductor-setup.md commands/setup.md .gitignore
-git commit -m "feat(models): config.models schema in setup + ignore overlay"
+git add conductor/config.json commands/conductor-setup.md commands/setup.md scripts/setup.sh .gitignore
+git commit -m "feat(models): config.models schema in all setup paths + ignore overlay"
 ```
 
 ---
@@ -498,13 +530,22 @@ git commit -m "feat(models): board-meeting spawn uses resolver in orchestrator s
 
 ## Phase 6: Documentation
 
-### Task 10: Document config + /use-models + limitation in README
+### Task 10: Document config + /use-models + limitation + Requirements in README
 
 **Files:**
-- Modify: `README.md` (near the mode/config section, ~204 and dir listing ~344)
+- Modify: `README.md` (Model Selection section near mode/config ~204; **Requirements section ~468**)
 - Modify: `CHANGELOG.md` (add entry)
 
-**Step 1:** Draft a "Model Selection" section covering: `models` schema, token vocabulary, per-command overrides, `/use-models` forms, precedence order, and the interactive-vs-orchestrated limitation (interactive path follows the session model via `inherit`; per-command overrides only apply on the orchestrated path).
+**Step 1a — Requirements (gap E):** the README Requirements list is only "Claude Code CLI" + "Git". The resolver and every hook need bash. Update to:
+```markdown
+## Requirements
+
+- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) CLI
+- Git
+- Bash — on Windows this is Git Bash (bundled with Git for Windows); hooks and the model resolver run under it. No jq or other tools required.
+```
+
+**Step 1b:** Draft a "Model Selection" section covering: `models` schema, token vocabulary, per-command overrides, `/use-models` forms, precedence order, and the interactive-vs-orchestrated limitation (interactive path follows the session model via `inherit`; per-command overrides only apply on the orchestrated path).
 
 **Step 3: Write** the section + a CHANGELOG entry under Unreleased:
 ```
@@ -541,6 +582,14 @@ grep -rnE 'claude --print --model (opus|sonnet)' agents skills
 
 **Step 3:** End-to-end resolver spot check with overlay + pins (Task 5 dry-run block).
 
+**Step 4:** Fresh-install simulation (fresh-machine coverage):
+```bash
+d=$(mktemp -d); bash scripts/setup.sh "$d"
+grep -q '"models"' "$d/conductor/config.json" && echo "setup writes models OK"
+( cd "$d" && bash "$OLDPWD/scripts/resolve-model.sh" writing-plans )   # expect opus
+rm -rf "$d"
+```
+
 **Step 5: Commit** (if any doc/fixups)
 ```bash
 git commit -am "test(models): regression gates green" || true
@@ -572,3 +621,4 @@ Task 11 (regression) ── last, after all
 - No `claude --print --model opus|sonnet` literals remain in `agents/` or `skills/`.
 - `/use-models fable+sonnet` then resolver returns fable/sonnet respecting config pins; `reset` restores defaults.
 - README + CHANGELOG document the feature and the interactive-path limitation.
+- **Fresh-install**: `scripts/setup.sh <dir>` produces a `config.json` containing a `models` block; resolver works with zero extra dependencies (no jq); README Requirements list bash.
