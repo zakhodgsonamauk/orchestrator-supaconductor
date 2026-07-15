@@ -78,9 +78,10 @@ mkdir -p conductor/knowledge
   "mode": "agentic",
   "max_fix_cycles": 5,
   "models": {
-    "planning": "opus",
+    "planning": "inherit",
     "execution": "sonnet",
-    "overrides": {}
+    "overrides": {},
+    "force_session_model": false
   }
 }
 ```
@@ -90,6 +91,9 @@ mkdir -p conductor/knowledge
 `"board-meeting": "opus"`. Values accept `opus|sonnet|haiku|fable`, an exact id like
 `claude-opus-4-8`, or `inherit`. See `scripts/resolve-model.sh` and `/use-models`.
 Legacy top-level `planning_model`/`execution_model` are still read for back-compat.
+If a configured model can't be selected (e.g. an Ollama backend), the resolver falls
+back to the running session model instead of erroring. Set `force_session_model: true`
+to always use the session model and skip the availability probe.
 
 **Mode Options:**
 - `"agentic"` (default) — Fully autonomous. All decisions resolved by agents. Interactive questions auto-generate after presenting suggestions. Never blocks on user input.
