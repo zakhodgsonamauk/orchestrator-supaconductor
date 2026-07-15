@@ -29,7 +29,7 @@ The probe is added INSIDE `emit` (so every resolved non-inherit candidate is che
 
 ### Task 1: Make existing tests hermetic + add `force_session_model`
 
-**Status:** [ ]
+**Status:** [x]
 
 **Files:** Modify `scripts/resolve-model.sh`, `scripts/test-resolve-model.sh`
 
@@ -77,7 +77,7 @@ git commit -m "feat(models): force_session_model flag + hermetic test default"
 
 ### Task 2: `available()` probe + per-run cache
 
-**Status:** [ ]
+**Status:** [x]
 
 **Files:** Modify `scripts/resolve-model.sh`, `scripts/test-resolve-model.sh`
 
@@ -160,7 +160,7 @@ git commit -m "feat(models): availability probe with per-run cache; unavailable 
 
 ### Task 3: planning=inherit, execution=sonnet, force flag in all setup paths
 
-**Status:** [ ]
+**Status:** [x]
 
 **Files:** `scripts/setup.sh`, `commands/setup.md`, `commands/conductor-setup.md`, live `conductor/config.json`
 
@@ -204,7 +204,7 @@ git commit -m "feat(models): default planning=inherit, execution=sonnet, add for
 
 ### Task 4: Extend `commands/use-models.md`
 
-**Status:** [ ]
+**Status:** [x]
 
 **Files:** Modify `commands/use-models.md`
 
@@ -238,7 +238,7 @@ git commit -m "feat(models): /use-models persistent config subcommands + help + 
 
 ### Task 5: Create `commands/use-models-help.md`
 
-**Status:** [ ]
+**Status:** [x]
 
 **Files:** Create `commands/use-models-help.md`
 
@@ -267,7 +267,7 @@ git commit -m "feat(models): add /use-models-help reference command"
 
 ### Task 6: Export `CONDUCTOR_PROBE_CACHE` at loop start
 
-**Status:** [ ]
+**Status:** [x]
 
 **Files:** Modify `agents/conductor-orchestrator.md`
 
@@ -299,7 +299,7 @@ git commit -m "feat(models): orchestrator sets per-run CONDUCTOR_PROBE_CACHE"
 
 ### Task 7: README + CHANGELOG
 
-**Status:** [ ]
+**Status:** [x]
 
 **Files:** Modify `README.md`, `CHANGELOG.md`
 
@@ -331,7 +331,7 @@ git commit -m "docs(models): fallback, force flag, new defaults, config commands
 
 ### Task 8: Full regression run
 
-**Status:** [ ]
+**Status:** [x]
 
 **Step 1:** `bash scripts/test-resolve-model.sh` → `FAIL=0` (all prior + new, hermetic — no real `claude` calls).
 
