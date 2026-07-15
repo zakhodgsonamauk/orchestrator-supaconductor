@@ -1,7 +1,7 @@
 {
   "name": "zakhodgson-plugins",
   "description": "Zak Hodgson's fork of SupaConductor — multi-agent orchestration for Claude Code (fork of Ibrahim-3d/orchestrator-supaconductor)",
-  "version": "3.7.0",
+  "version": "3.8.0",
   "owner": {
     "name": "zakhodgsonamauk",
     "url": "https://github.com/zakhodgsonamauk"
@@ -14,7 +14,7 @@
         "repo": "zakhodgsonamauk/orchestrator-supaconductor"
       },
       "description": "Conductor v3 — Multi-agent orchestration with Evaluate-Loop, parallel execution, Board of Directors, and bundled SupaConductor skills for Claude Code",
-      "version": "3.7.0",
+      "version": "3.8.0",
       "author": {
         "name": "Ibrahim",
         "url": "https://github.com/Ibrahim-3d"
