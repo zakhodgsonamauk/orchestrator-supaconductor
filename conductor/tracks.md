@@ -6,7 +6,7 @@ Active and completed development tracks.
 
 | Track ID | Name | Type | Status | Step | Created |
 |----------|------|------|--------|------|---------|
-| (none) | | | | | |
+| model-fallback_20260715 | Model-Availability Fallback + Config Commands | infrastructure | planned | EVALUATE_PLAN | 2026-07-15 |
 
 ## Completed Tracks
 

@@ -1,0 +1,17 @@
+{
+  "version": 3,
+  "track_id": "model-fallback_20260715",
+  "name": "Model-Availability Fallback + Config Commands",
+  "type": "infrastructure",
+  "status": "new",
+  "superpower_enhanced": true,
+  "created_at": "2026-07-15",
+  "loop_state": {
+    "current_step": "EVALUATE_PLAN",
+    "step_status": "NOT_STARTED",
+    "fix_cycle_count": 0,
+    "checkpoints": {
+      "PLAN": { "status": "PASSED" }
+    }
+  }
+}
