@@ -24,6 +24,11 @@ Before doing ANYTHING else, read `conductor/config.json` and extract the `mode` 
 ```bash
 # First action on every orchestration run
 cat conductor/config.json
+
+# Fresh per-run model-availability cache so model probes re-run each orchestration.
+# Dispatched child agents inherit this env var, so each model is probed at most once
+# per run (see scripts/resolve-model.sh). The file is a throwaway temp path.
+export CONDUCTOR_PROBE_CACHE="$(mktemp -u 2>/dev/null || echo "${TMPDIR:-/tmp}/conductor-probe-$$.cache")"
 ```
 
 **Two modes:**
