@@ -88,12 +88,13 @@ projU="$TMP/pU"; mkdir -p "$projU/conductor"
 cat > "$projU/conductor/config.json" <<'JSON'
 { "models": { "planning": "inherit", "execution": "sonnet" } }
 JSON
+# FIX-1: isolate cache per call so results don't leak between probe tests
 assert_eq "probe unavailable -> inherit" "inherit" \
-  "$( cd "$projU" && CONDUCTOR_PROBE_RESULT=unavailable bash "$RESOLVE" loop-executor )"
+  "$( cd "$projU" && CONDUCTOR_PROBE_CACHE="$(mktemp -u)" CONDUCTOR_PROBE_RESULT=unavailable bash "$RESOLVE" loop-executor )"
 assert_eq "probe available -> sonnet" "sonnet" \
-  "$( cd "$projU" && CONDUCTOR_PROBE_RESULT=available bash "$RESOLVE" loop-executor )"
+  "$( cd "$projU" && CONDUCTOR_PROBE_CACHE="$(mktemp -u)" CONDUCTOR_PROBE_RESULT=available bash "$RESOLVE" loop-executor )"
 assert_eq "inherit role skips probe" "inherit" \
-  "$( cd "$projU" && CONDUCTOR_PROBE_RESULT=unavailable bash "$RESOLVE" writing-plans )"
+  "$( cd "$projU" && CONDUCTOR_PROBE_CACHE="$(mktemp -u)" CONDUCTOR_PROBE_RESULT=unavailable bash "$RESOLVE" writing-plans )"
 
 # --- Fixture: seeded per-run cache wins over probe hook ---
 seed="$TMP/probe-cache.txt"; printf 'sonnet=0\n' > "$seed"
