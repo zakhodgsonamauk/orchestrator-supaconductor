@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 # Plain-bash test harness for resolve-model.sh. Zero external deps.
 set -u
+# Hermetic default: never invoke the real `claude` probe. Individual tests
+# override CONDUCTOR_PROBE_RESULT / CONDUCTOR_PROBE_CACHE as needed.
+export CONDUCTOR_PROBE_RESULT=available
 HERE="$(cd "$(dirname "$0")" && pwd)"
 RESOLVE="$HERE/resolve-model.sh"
 PASS=0; FAIL=0
@@ -70,6 +73,32 @@ JSON
 assert_eq "invalid token falls back to inherit" "inherit" "$(run "$proj4" writing-plans 2>/dev/null)"
 ( cd "$proj4" && echo '{"models":{"planning":"claude-opus-4-8","execution":"sonnet"}}' > conductor/config.json )
 assert_eq "valid exact id passes" "claude-opus-4-8" "$(run "$proj4" writing-plans)"
+
+# --- Fixture: availability probe ---
+projU="$TMP/pU"; mkdir -p "$projU/conductor"
+cat > "$projU/conductor/config.json" <<'JSON'
+{ "models": { "planning": "inherit", "execution": "sonnet" } }
+JSON
+# isolate cache per call so results don't leak between probe tests (FIX-1)
+assert_eq "probe unavailable -> inherit" "inherit" \
+  "$( cd "$projU" && CONDUCTOR_PROBE_CACHE="$(mktemp -u)" CONDUCTOR_PROBE_RESULT=unavailable bash "$RESOLVE" loop-executor )"
+assert_eq "probe available -> sonnet" "sonnet" \
+  "$( cd "$projU" && CONDUCTOR_PROBE_CACHE="$(mktemp -u)" CONDUCTOR_PROBE_RESULT=available bash "$RESOLVE" loop-executor )"
+assert_eq "inherit role skips probe" "inherit" \
+  "$( cd "$projU" && CONDUCTOR_PROBE_CACHE="$(mktemp -u)" CONDUCTOR_PROBE_RESULT=unavailable bash "$RESOLVE" writing-plans )"
+
+# seeded per-run cache wins over the probe hook
+seed="$TMP/probe-cache.txt"; printf 'sonnet=0\n' > "$seed"
+assert_eq "seeded cache unavailable -> inherit (no probe)" "inherit" \
+  "$( cd "$projU" && CONDUCTOR_PROBE_CACHE="$seed" CONDUCTOR_PROBE_RESULT=available bash "$RESOLVE" loop-executor )"
+
+# --- Fixture: force_session_model short-circuits everything ---
+projF="$TMP/pF"; mkdir -p "$projF/conductor"
+cat > "$projF/conductor/config.json" <<'JSON'
+{ "models": { "planning": "opus", "execution": "sonnet", "force_session_model": true } }
+JSON
+assert_eq "force flag -> inherit (planning)" "inherit" "$(run "$projF" writing-plans)"
+assert_eq "force flag -> inherit (execution)" "inherit" "$(run "$projF" loop-executor)"
 
 echo "----"; echo "PASS=$PASS FAIL=$FAIL"
 [ "$FAIL" -eq 0 ]

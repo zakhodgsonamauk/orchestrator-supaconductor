@@ -259,36 +259,60 @@ or **execution** — and each role has a default model. Set them in `conductor/c
 ```json
 {
   "models": {
-    "planning": "opus",
+    "planning": "inherit",
     "execution": "sonnet",
     "overrides": {
       "board-meeting": "opus",
       "new-track": "inherit"
-    }
+    },
+    "force_session_model": false
   }
 }
 ```
 
-- **`planning` / `execution`** — default model per role.
+- **`planning` / `execution`** — default model per role. Defaults: planning=`inherit`
+  (use your session model), execution=`sonnet`.
 - **`overrides`** — pin an individual command to any model or `inherit`. One entry per line.
+- **`force_session_model`** — when `true`, always use the running session model and skip the
+  availability probe. For known non-Anthropic backends.
 - **Tokens** — aliases `opus` `sonnet` `haiku` `fable`, exact ids
   (`claude-opus-4-8`, `claude-sonnet-5`, `claude-haiku-4-5-20251001`, `claude-fable-5`),
   or `inherit` (use the current session model).
 - **Legacy** — top-level `planning_model` / `execution_model` are still honored.
 
-### `/use-models` — per-session override
+### Fallback when a model isn't available
 
+If a configured Claude model can't be selected — for example the harness is running an
+Ollama or other non-Anthropic backend — the resolver **falls back to the running session
+model (`inherit`) instead of erroring**. It probes each configured model once per run
+(`claude --print --model <m> …`), caches the result, and quietly downgrades to `inherit`
+on failure. Set `force_session_model: true` to skip probing entirely.
+
+### `/use-models` — configure models
+
+Session overlay (ephemeral):
 ```
 /use-models fable+sonnet   # planning=fable, execution=sonnet for this session
 /use-models opus           # both roles = opus
-/use-models show           # print the resolved model for every command
-/use-models reset          # clear the session overlay
+/use-models show           # config + resolved model for every command
+/use-models reset          # clear the session overlay + probe cache
 ```
 
-This writes `conductor/.session-models.json` (not committed). It sets the two role
-models; per-command `overrides` in `config.json` still win.
+Persistent config (`config.json`):
+```
+/use-models set-default inherit+sonnet   # set role defaults
+/use-models pin board-meeting=opus       # pin one command
+/use-models unpin board-meeting          # remove a pin
+/use-models force on | off               # toggle force_session_model
+```
 
-**Precedence:** command pin > session overlay > role default > `inherit`.
+Help: `/use-models-help` (or `/use-models help`) prints a full reference card.
+
+The session overlay writes `conductor/.session-models.json` (not committed) and sets the two
+role models; per-command `overrides` in `config.json` still win.
+
+**Precedence:** `force_session_model` > command pin > session overlay > role default >
+`inherit` — then the resolved model is availability-probed (unavailable → `inherit`).
 
 ### Interactive vs orchestrated (important)
 

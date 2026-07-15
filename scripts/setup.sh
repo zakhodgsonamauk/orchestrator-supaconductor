@@ -91,9 +91,10 @@ if [ ! -f "$PROJECT_DIR/conductor/config.json" ]; then
   "mode": "agentic",
   "max_fix_cycles": 5,
   "models": {
-    "planning": "opus",
+    "planning": "inherit",
     "execution": "sonnet",
-    "overrides": {}
+    "overrides": {},
+    "force_session_model": false
   }
 }
 CONFIG_EOF
