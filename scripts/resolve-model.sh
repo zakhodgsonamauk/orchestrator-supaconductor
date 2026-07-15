@@ -33,6 +33,12 @@ json_val() {
   sed -n "s/.*\"${key}\"[[:space:]]*:[[:space:]]*\"\([^\"]*\)\".*/\1/p" "$1" | head -1
 }
 
+# json_bool <file> <key> — exit 0 if "key": true (unquoted JSON boolean)
+json_bool() {
+  [ -f "$1" ] || return 1
+  grep -Eq "\"$2\"[[:space:]]*:[[:space:]]*true([[:space:],}]|\$)" "$1"
+}
+
 valid_token() {
   case "$1" in
     inherit|opus|sonnet|haiku|fable) return 0 ;;
@@ -47,6 +53,9 @@ emit() {
 
 ROLE="$(role_for "$CMD")"
 [ -z "$ROLE" ] && emit inherit   # unknown command
+
+# 0. force_session_model escape hatch (known non-Anthropic backends, e.g. Ollama)
+json_bool "$CONFIG" force_session_model && emit inherit
 
 # 1. per-command pin (config.models.overrides.<command>)
 pin="$(json_val "$CONFIG" "$CMD")"
