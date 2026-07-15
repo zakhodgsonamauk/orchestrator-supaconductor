@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Features
 
 - **Configurable model selection** — models are no longer hardcoded per command. Set `models.planning` / `models.execution` and per-command `models.overrides` in `conductor/config.json`, or `/use-models <plan>+<exec>` for the session. Resolved by a new jq-free `scripts/resolve-model.sh` (precedence: command pin > session overlay > role default > `inherit`). All agent/command frontmatter now uses `model: inherit`, so interactive commands follow your session model (e.g. run on Fable without being forced to Opus). The orchestrator's dispatch resolves the model via the resolver instead of hardcoded `--model` flags. `scripts/setup.sh` now scaffolds `config.json` with a `models` block.
+- **Model-availability fallback** — the resolver now probes a configured Claude model once per run and falls back to the running session model (`inherit`) when it can't be selected (e.g. an Ollama backend), instead of erroring. New `models.force_session_model` flag forces the session model and skips probing. Defaults changed to planning=`inherit` / execution=`sonnet`. `/use-models` gained persistent config subcommands (`set-default`, `pin`, `unpin`, `force`) and there is a new `/use-models-help` reference card. The orchestrator sets a per-run `CONDUCTOR_PROBE_CACHE` so probes re-run each orchestration.
 
 ## [3.7.0] - 2026-04-03
 
